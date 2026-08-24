@@ -1,23 +1,36 @@
-import 'dotenv/config';
-import express, { Request, Response } from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
+import type { Server } from 'node:http';
 
-const app = express();
-const PORT = process.env.PORT ?? 4000;
+import { createApp } from './app';
+import { env } from './config/env';
 
-app.use(cors());
-app.use(express.json());
-app.use(morgan('dev'));
+const app = createApp();
 
-app.get('/health', (_req: Request, res: Response) => {
-  res.json({ status: 'ok', service: 'kalopehomes-api', timestamp: new Date().toISOString() });
+const server: Server = app.listen(env.port, () => {
+  console.log(`🚀 API listening on http://localhost:${env.port} [${env.nodeEnv}]`);
 });
 
-app.get('/', (_req: Request, res: Response) => {
-  res.json({ message: 'Kalope Homes API' });
-});
+/** Gracefully drain in-flight requests before exiting. */
+function shutdown(signal: string): void {
+  console.log(`\n${signal} received — shutting down gracefully...`);
+  server.close((err) => {
+    if (err) {
+      console.error('Error during shutdown', err);
+      process.exit(1);
+    }
+    console.log('Closed all connections. Bye.');
+    process.exit(0);
+  });
 
-app.listen(PORT, () => {
-  console.log(`🚀 API listening on http://localhost:${PORT}`);
+  // Force-exit if connections don't drain in time.
+  setTimeout(() => {
+    console.error('Forced shutdown after timeout.');
+    process.exit(1);
+  }, 10_000).unref();
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
 });
