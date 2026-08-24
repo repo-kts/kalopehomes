@@ -7,6 +7,7 @@ Monorepo containing four TypeScript applications.
 | `web`        | Next.js + TypeScript       | Public frontend app    |
 | `admin`      | React (Vite) + TypeScript  | Admin dashboard        |
 | `quotation`  | React (Vite) + TypeScript  | Quotation app          |
+| `crm`        | React (Vite) + TypeScript  | CRM app                |
 | `api`        | Node.js + Express + TS     | Backend API            |
 
 ## Getting started
@@ -22,6 +23,9 @@ cd admin && npm install && npm run dev
 
 # Quotation (Vite)
 cd quotation && npm install && npm run dev
+
+# CRM (Vite)
+cd crm && npm install && npm run dev
 
 # API (Express)
 cd api && npm install && npm run dev
