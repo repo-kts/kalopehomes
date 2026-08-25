@@ -1,26 +1,326 @@
 @import 'tailwindcss';
 
+/* ------------------------------------------------------------------ *
+ * Kalope Homes design tokens
+ * ------------------------------------------------------------------ */
+@theme {
+  /* Brand ground — deep teal drawn from the logo mark. */
+  --color-paper: #f4f6f5;
+  --color-paper-deep: #e6edeb;
+  --color-ink: #0a302d;
+  --color-ink-deep: #061f1e;
+
+  /* Brand accent — logo orange. `accent` is for graphics and for text on
+     dark grounds; `accent-deep` is the same hue darkened to clear 4.5:1
+     against paper, for orange text on light. */
+  --color-accent: #e8822b;
+  --color-accent-deep: #a8530c;
+
+  /* Logo teal, for the mark and secondary emphasis. */
+  --color-teal: #17817b;
+
+  --color-body: #2e4a47;
+  --color-muted: #55706d;
+  --color-muted-light: #a8c0bd;
+  --color-muted-dim: #7b9895;
+  --color-rule: #cad8d6;
+  --color-rule-dark: #1c4340;
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-marcellus), Georgia, 'Times New Roman', serif;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Single easing curve for every transition on the site. */
+  --kh-ease: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--color-paper);
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-ink);
+}
+
+/* ------------------------------------------------------------------ *
+ * Reveal system
+ *
+ * Every animated element carries a `kh-*` class describing its resting
+ * (hidden) state. A `[data-shown="true"]` ancestor — set by <Reveal> once
+ * the section scrolls into view — starts the animation. Per-element
+ * stagger comes from the `--kh-d` custom property.
+ * ------------------------------------------------------------------ */
+@keyframes kh-panel-up {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+@keyframes kh-rise {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes kh-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes kh-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes kh-line-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes kh-blind {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+  }
+}
+@keyframes kh-zoom-settle {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+@keyframes kh-frame-open-l {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-101%);
+  }
+}
+@keyframes kh-frame-open-r {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(101%);
+  }
+}
+
+/* Resting states */
+.kh-rise {
+  transform: translateY(110%);
+}
+.kh-fade-up {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.kh-fade {
+  opacity: 0;
+}
+.kh-line-x {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.kh-blind,
+.kh-panel {
+  transform-origin: top;
+}
+.kh-frame-l,
+.kh-frame-r {
+  transform: translateX(0);
+}
+.kh-zoom {
+  transform: scale(1.12);
+}
+
+/* Played states */
+[data-shown='true'] .kh-panel {
+  animation: kh-panel-up 0.9s var(--kh-ease) var(--kh-d, 0s) both;
+}
+[data-shown='true'] .kh-rise {
+  animation: kh-rise 0.85s var(--kh-ease) var(--kh-d, 0s) both;
+}
+[data-shown='true'] .kh-fade-up {
+  animation: kh-fade-up 0.75s var(--kh-ease) var(--kh-d, 0s) both;
+}
+[data-shown='true'] .kh-fade {
+  animation: kh-fade 0.7s var(--kh-ease) var(--kh-d, 0s) both;
+}
+[data-shown='true'] .kh-line-x {
+  animation: kh-line-x 0.7s var(--kh-ease) var(--kh-d, 0s) both;
+}
+[data-shown='true'] .kh-blind {
+  animation: kh-blind 0.85s var(--kh-ease) var(--kh-d, 0s) both;
+}
+[data-shown='true'] .kh-zoom {
+  animation: kh-zoom-settle 1.1s var(--kh-ease) var(--kh-d, 0s) both;
+}
+[data-shown='true'] .kh-frame-l {
+  animation: kh-frame-open-l 1s var(--kh-ease) var(--kh-d, 0.1s) both;
+}
+[data-shown='true'] .kh-frame-r {
+  animation: kh-frame-open-r 1s var(--kh-ease) var(--kh-d, 0.1s) both;
+}
+
+/* Anyone who asked for less motion gets the finished layout, immediately. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .kh-rise,
+  .kh-fade-up,
+  .kh-fade {
+    opacity: 1;
+    transform: none;
+  }
+  .kh-line-x {
+    transform: scaleX(1);
+  }
+  .kh-blind,
+  .kh-panel {
+    transform: scaleY(0);
+  }
+  .kh-frame-l {
+    transform: translateX(-101%);
+  }
+  .kh-frame-r {
+    transform: translateX(101%);
+  }
+  .kh-zoom {
+    transform: none;
+  }
+
+  [data-shown='true'] .kh-panel,
+  [data-shown='true'] .kh-rise,
+  [data-shown='true'] .kh-fade-up,
+  [data-shown='true'] .kh-fade,
+  [data-shown='true'] .kh-line-x,
+  [data-shown='true'] .kh-blind,
+  [data-shown='true'] .kh-zoom,
+  [data-shown='true'] .kh-frame-l,
+  [data-shown='true'] .kh-frame-r {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Reviews marquee
+ *
+ * The track holds the review list four times and shifts by exactly one
+ * list-width (-25%), so the loop is seamless and the tail never runs into
+ * view on wide screens. Cards carry their own right margin rather than a
+ * flex `gap`, which keeps that width a clean fraction.
+ * ------------------------------------------------------------------ */
+@keyframes kh-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-25%);
+  }
+}
+
+.kh-marquee-viewport {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+
+.kh-marquee {
+  animation: kh-marquee 50s linear infinite;
+}
+
+/* Let people stop the strip to finish reading a review. */
+.kh-marquee:hover,
+.kh-marquee:focus-within {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kh-marquee {
+    animation: none;
+  }
+  .kh-marquee-viewport {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* Header dropdown entry. */
+@keyframes kh-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.kh-menu {
+  animation: kh-menu-in 0.22s var(--kh-ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kh-menu {
+    animation: none;
+  }
+}
+
+/* Vertical rule draw — the stacked Process timeline below `lg`. */
+@keyframes kh-line-y {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.kh-line-y {
+  transform: scaleY(0);
+  transform-origin: top;
+}
+
+[data-shown='true'] .kh-line-y {
+  animation: kh-line-y 0.9s var(--kh-ease) var(--kh-d, 0s) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kh-line-y {
+    transform: scaleY(1);
+  }
+  [data-shown='true'] .kh-line-y {
+    animation: none;
+  }
 }
