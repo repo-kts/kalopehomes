@@ -1,0 +1,20 @@
+import { PrismaClient } from '@prisma/client';
+
+import { env } from '../config/env';
+
+/**
+ * A single PrismaClient instance shared across the app.
+ * In development we cache it on `globalThis` so hot-reloads (ts-node-dev)
+ * don't exhaust the connection pool by creating a client per reload.
+ */
+const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+
+export const prisma =
+  globalForPrisma.prisma ??
+  new PrismaClient({
+    log: env.isProduction ? ['error'] : ['warn', 'error'],
+  });
+
+if (!env.isProduction) {
+  globalForPrisma.prisma = prisma;
+}

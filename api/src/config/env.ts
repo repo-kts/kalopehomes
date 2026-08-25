@@ -20,6 +20,9 @@ export const env = {
   isTest: nodeEnv === 'test',
   port: Number.parseInt(required('PORT', '4000'), 10),
   corsOrigin: process.env.CORS_ORIGIN ?? '*',
+  databaseUrl: required('DATABASE_URL'),
+  jwtSecret: required('JWT_SECRET', nodeEnv === 'production' ? undefined : 'dev-secret-change-me'),
+  jwtExpiresIn: process.env.JWT_EXPIRES_IN ?? '7d',
 } as const;
 
 export type Env = typeof env;
