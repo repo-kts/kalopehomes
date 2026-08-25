@@ -1,38 +1,22 @@
+import Image from 'next/image';
+
+import logo from '@/public/logo.png';
+
 /**
- * Kalope Homes wordmark.
+ * The Kalope Homes logo (from kalopehomes.com/logo-full.png).
  *
- * The original design imported a static `public/logo.png` (410x115) that was
- * never committed to the repo, which broke the production build. Until the real
- * artwork is added, this renders a self-contained SVG wordmark that inherits
- * the surrounding text colour via `currentColor` and keeps the same footprint.
- *
- * To restore the real logo: drop the PNG at `public/logo.png` and swap this
- * back to a `next/image` static import.
+ * Imported statically so Next reads the real intrinsic size (500x500) and
+ * keeps the aspect ratio exact; replacing `public/logo.png` updates it
+ * automatically.
  */
 export function Logo() {
   return (
-    <svg
-      viewBox="0 0 410 115"
-      role="img"
-      aria-label="Kalope Homes"
-      className="h-11 w-auto -translate-y-1 sm:h-12"
-      fill="currentColor"
-    >
-      <text
-        x="0"
-        y="72"
-        textLength="410"
-        lengthAdjust="spacingAndGlyphs"
-        fontFamily="Georgia, 'Times New Roman', serif"
-        fontSize="60"
-        fontWeight={600}
-      >
-        Kalope
-        <tspan fontWeight={400} letterSpacing="4">
-          {' '}
-          HOMES
-        </tspan>
-      </text>
-    </svg>
+    <Image
+      src={logo}
+      alt="Kalope Homes"
+      priority
+      sizes="(max-width: 640px) 64px, 80px"
+      className="h-20 w-auto sm:h-24"
+    />
   );
 }
