@@ -62,7 +62,7 @@ export const hero = {
     src: '/hero-poster.jpg',
     alt: 'The entrance and living room of a completed Kalope Homes interior',
   },
-  video: '/hero.mp4',
+  video: '/hero.webm',
 } as const;
 
 export type Room = {
