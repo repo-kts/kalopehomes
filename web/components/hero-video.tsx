@@ -16,7 +16,15 @@ const INTRO_MS = 1500;
  * Autoplay requires `muted`; the file has no audio track at all. Playback is
  * skipped entirely for anyone who has asked for reduced motion.
  */
-export function HeroVideo({ src }: { src: string }) {
+export function HeroVideo({
+  src,
+  poster,
+  fallback,
+}: {
+  src: string;
+  poster?: string;
+  fallback?: string;
+}) {
   const ref = useRef<HTMLVideoElement>(null);
   const [ready, setReady] = useState(false);
 
@@ -44,12 +52,14 @@ export function HeroVideo({ src }: { src: string }) {
       loop
       playsInline
       preload="none"
+      poster={poster}
       aria-label="Walkthrough of a completed Kalope Homes interior"
       className={`absolute inset-0 z-[1] h-full w-full object-cover transition-opacity duration-700 ${
         ready ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      <source src={src} type="video/mp4" />
+      <source src={src} type="video/webm" />
+      {fallback ? <source src={fallback} type="video/mp4" /> : null}
     </video>
   );
 }

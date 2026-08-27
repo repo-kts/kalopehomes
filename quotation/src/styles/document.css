@@ -1,0 +1,272 @@
+/*
+ * The printed quotation. Every measurement here is traced from the approved
+ * document (KH114_Chandan.pdf) rendered at 110 dpi, where 1 px = 0.2305 mm.
+ * The letterhead — header band, watermark and footer — is the background image
+ * embedded in the source PDF, used verbatim, so branding cannot drift from the
+ * original.
+ */
+
+.page {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  overflow: hidden;
+  background-color: #fff;
+  color: #000;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11pt;
+  line-height: 1.32;
+}
+
+/*
+ * The letterhead is a real <img> rather than a CSS background: browsers drop
+ * background images unless the user ticks "Background graphics" when printing.
+ */
+.page__letterhead {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+/*
+ * Content box: 1 inch side margins. The vertical bounds match the approved
+ * document, whose deepest line sits at 247.3 mm — just above the footer block.
+ */
+.page__body {
+  position: absolute;
+  inset: 48.5mm 25.4mm 48.5mm 25.4mm;
+}
+
+/* ---------------------------------------------------------------------------
+ * Flow blocks. The paginator wraps every block identically on the measuring
+ * pass and on the real page, so the gap below is part of the measured height.
+ * ------------------------------------------------------------------------ */
+
+.flow-block {
+  padding-top: var(--flow-gap, 8.5mm);
+}
+
+.page__body > .flow-block:first-child {
+  padding-top: 0;
+}
+
+/* Off-screen measuring pass — hidden but still laid out. */
+.flow-measurer {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * Typography
+ * ------------------------------------------------------------------------ */
+
+.doc-title {
+  margin: 0;
+  /* The original's title carries space above it that headings do not. */
+  padding-top: 2.6mm;
+  font-size: 18pt;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.doc-heading {
+  margin: 0 0 2.7mm;
+  font-size: 18pt;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.doc-subheading {
+  margin: 0 0 4.36mm;
+  font-size: 13pt;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.doc-subheading:not(:first-child) {
+  padding-top: 2.9mm;
+}
+
+.doc-paragraph,
+.doc-note,
+.doc-plain-notes p {
+  margin: 0;
+}
+
+.doc-note {
+  font-style: italic;
+}
+
+/* Lists — marker at 8 mm, text at 12.6 mm from the text edge. */
+.doc-list {
+  margin: 0;
+  padding: 0 0 0 12.7mm;
+  list-style: none;
+}
+
+.doc-list li {
+  position: relative;
+}
+
+/*
+ * Both markers sit at 6.35 mm before the text and print at full body size —
+ * the approved document sets them in Arial and MS PGothic at 11 pt.
+ */
+.doc-list--bullet > li::before {
+  content: '●';
+  position: absolute;
+  left: -6.35mm;
+  top: 0;
+}
+
+.doc-list--arrow > li::before {
+  content: '➔';
+  position: absolute;
+  left: -6.35mm;
+  top: 0;
+  font-family: 'MS PGothic', 'Segoe UI Symbol', Arial, sans-serif;
+}
+
+/*
+ * A bullet list opening a section sits lower than a plain paragraph would; an
+ * arrow list does not. Putting the offset on the <ul> carries the marker with
+ * it, since the marker is positioned against its own <li>.
+ */
+.doc-heading + .doc-list--bullet {
+  padding-top: 2.1mm;
+}
+
+/* Multi-line entries get a blank line between them, as in the original. That
+ * padding is on the <li>, so the absolutely positioned marker must clear it. */
+.doc-list--spaced > li + li {
+  padding-top: 5.15mm;
+}
+
+.doc-list--spaced > li + li::before {
+  top: 5.15mm;
+}
+
+/* ---------------------------------------------------------------------------
+ * Details block (dynamic)
+ * ------------------------------------------------------------------------ */
+
+.details-block__row {
+  display: flex;
+}
+
+.details-block__label {
+  flex: 0 0 37.3mm;
+}
+
+.details-block__value.is-bold {
+  font-weight: 700;
+}
+
+.details-block__value.is-italic {
+  font-style: italic;
+}
+
+/* ---------------------------------------------------------------------------
+ * Item tables (dynamic)
+ * ------------------------------------------------------------------------ */
+
+.section-table__title {
+  margin: 0 0 0.4mm;
+  font-size: 14pt;
+  font-weight: 700;
+  /* Centred over the text column, not the wider table — as in the original. */
+  text-align: center;
+}
+
+.items-table {
+  width: 168.6mm;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 9pt;
+  line-height: 1.25;
+}
+
+.items-table th,
+.items-table td {
+  border: 0.6pt solid #000;
+  padding: 0.65mm 1.2mm;
+  text-align: center;
+  vertical-align: middle;
+  word-break: break-word;
+}
+
+.items-table th {
+  font-weight: 700;
+}
+
+.items-table__total .is-label {
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------------
+ * Totals, cost breakup, approval
+ * ------------------------------------------------------------------------ */
+
+.totals-block {
+  font-weight: 700;
+}
+
+.totals-block__row {
+  display: flex;
+}
+
+.totals-block__label {
+  flex: 0 0 39mm;
+}
+
+.totals-block__colon {
+  flex: 0 0 24.3mm;
+}
+
+/* The approved document leaves one blank line above the final amount. */
+.totals-block__row--final {
+  padding-top: 1.32em;
+}
+
+/* The breakup rows carry space above and below, unlike a plain bullet list. */
+.breakup-block .doc-list {
+  padding-top: 1.4mm;
+  padding-bottom: 1.55mm;
+}
+
+.breakup-block .doc-list > li + li {
+  padding-top: 1.6mm;
+}
+
+.breakup-block__row--head {
+  display: flex;
+  padding-left: 12.7mm;
+  font-weight: 700;
+}
+
+.breakup-block__component {
+  display: inline-block;
+  width: 50.7mm;
+}
+
+.approval-block {
+  padding-top: 2.1mm;
+}
+
+.approval-block__row {
+  display: flex;
+}
+
+.approval-block__row + .approval-block__row {
+  padding-top: 4mm;
+}
+
+.approval-block__label {
+  flex: 0 0 25.8mm;
+}
