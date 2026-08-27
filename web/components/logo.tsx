@@ -19,8 +19,8 @@ export function Logo() {
       src={logo}
       alt="Kalope Homes"
       priority
-      sizes="(max-width: 640px) 150px, 175px"
-      className="h-11 w-auto -translate-y-1 sm:h-12"
+      sizes="(max-width: 640px) 190px, 215px"
+      className="h-13 w-auto -translate-y-1 sm:h-15"
     />
   );
 }
