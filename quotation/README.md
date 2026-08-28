@@ -19,6 +19,7 @@ amount of per-client data. Only the latter is editable:
 | Quotation No., Date, Client Name, Project Location, Contact Number, Prepared By | Title, intro, Why Kalope Homes, Material Specifications, Scope of Work           |
 | Section tables — Category, Description, Unit, Qty, Rate                         | Cost Breakup, Payment Terms, Project Timeline, Warranty, Care, Site Requirements |
 | Discount                                                                        | Design Changes, Transportation, Terms & Conditions, Client Approval              |
+| Letterhead footer — phone, email, website                                       | Logo, GSTIN, watermark, corporate address, all letterhead artwork                |
 
 The fixed copy lives in [`src/data/document.ts`](src/data/document.ts) — edit it
 there and every future quotation picks up the change. Amounts, per-section Grand

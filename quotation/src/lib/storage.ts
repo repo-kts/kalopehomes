@@ -1,5 +1,5 @@
 import type { Quotation } from '@/types/quotation';
-import { QUOTATION_VERSION, createQuotation } from './quotation';
+import { DEFAULT_COMPANY, QUOTATION_VERSION, createQuotation } from './quotation';
 
 const KEY = 'kalope.quotation.draft';
 
@@ -12,7 +12,8 @@ export function loadDraft(): Quotation {
     if (parsed?.version !== QUOTATION_VERSION || !Array.isArray(parsed.sections)) {
       return createQuotation();
     }
-    return parsed;
+    // Drafts saved before the letterhead contact was editable have no `company`.
+    return { ...parsed, company: { ...DEFAULT_COMPANY, ...parsed.company } };
   } catch {
     return createQuotation();
   }

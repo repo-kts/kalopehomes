@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ClientDetails, LineItem, Quotation, QuoteSection } from '@/types/quotation';
+import type {
+  ClientDetails,
+  CompanyContact,
+  LineItem,
+  Quotation,
+  QuoteSection,
+} from '@/types/quotation';
 import { computeTotals, createLineItem, createQuotation, createSection } from './quotation';
 import { clearDraft, loadDraft, saveDraft } from './storage';
 
@@ -27,6 +33,10 @@ export function useQuotation() {
     () => ({
       setDetail<K extends keyof ClientDetails>(key: K, value: ClientDetails[K]) {
         setQuotation((current) => ({ ...current, details: { ...current.details, [key]: value } }));
+      },
+
+      setCompany<K extends keyof CompanyContact>(key: K, value: CompanyContact[K]) {
+        setQuotation((current) => ({ ...current, company: { ...current.company, [key]: value } }));
       },
 
       setDiscount(value: string) {

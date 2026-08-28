@@ -30,6 +30,37 @@
 }
 
 /*
+ * Letterhead footer contact lines. The block is erased from letterhead.png
+ * (x 23.5-130 mm, y 246-265 mm) and redrawn here so it can be edited; the icons
+ * are crops of the original, so only the type is a substitute. The source PDF
+ * is fully vectorised and embeds no font, so Trebuchet MS stands in as the
+ * closest available match to the brand face.
+ */
+.letterhead-contact {
+  position: absolute;
+  inset: 0;
+  color: #088283;
+  font-family: 'Trebuchet MS', 'Segoe UI', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 2.97mm;
+  line-height: 1;
+}
+
+.letterhead-contact__icon {
+  position: absolute;
+}
+
+.letterhead-contact__text {
+  position: absolute;
+  left: 24.4mm;
+  white-space: nowrap;
+}
+
+.letterhead-contact__text.is-italic {
+  font-style: italic;
+}
+
+/*
  * Content box: 1 inch side margins. The vertical bounds match the approved
  * document, whose deepest line sits at 247.3 mm — just above the footer block.
  */

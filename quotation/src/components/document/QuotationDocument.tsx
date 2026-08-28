@@ -5,6 +5,7 @@ import { computeTotals } from '@/lib/quotation';
 import type { Quotation } from '@/types/quotation';
 import { ClientApproval, CostBreakup, DetailsBlock, TotalsBlock } from './DetailsBlock';
 import { SectionTable } from './ItemsTable';
+import { LetterheadContact } from './LetterheadContact';
 import { sectionRowParts } from './SectionRows';
 import { PaginatedDocument, type FlowBlock } from './Paginator';
 import {
@@ -167,6 +168,7 @@ export function QuotationDocument({ quotation, onPageCount }: QuotationDocumentP
       renderPage={(content) => (
         <div className="page">
           <img className="page__letterhead" src={letterhead} alt="" />
+          <LetterheadContact company={quotation.company} />
           <div className="page__body">{content}</div>
         </div>
       )}

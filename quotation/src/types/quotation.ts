@@ -64,10 +64,22 @@ export interface ClientDetails {
   preparedBy: string;
 }
 
+/**
+ * Contact details printed in the letterhead footer of every page. They belong
+ * to Kalope Homes rather than the client, but sit on the quotation so a branch
+ * or a salesperson can put their own line on the paper.
+ */
+export interface CompanyContact {
+  phone: string;
+  email: string;
+  website: string;
+}
+
 export interface Quotation {
   /** Bumped when the persisted shape changes so stale drafts are discarded. */
   version: number;
   details: ClientDetails;
+  company: CompanyContact;
   sections: QuoteSection[];
   /** Flat amount taken off the subtotal to reach the final amount. */
   discount: string;

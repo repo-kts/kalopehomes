@@ -3,6 +3,7 @@ import { AREA_UNIT } from '@/types/quotation';
 import type {
   CatalogNode,
   ClientDetails,
+  CompanyContact,
   LineItem,
   Quotation,
   QuotationTotals,
@@ -36,6 +37,13 @@ export function createSection(title = 'Modular Kitchen'): QuoteSection {
   return { id: createId('section'), title, items: [createLineItem()], blankRows: 2 };
 }
 
+/** What the printed letterhead has always said; the starting point every time. */
+export const DEFAULT_COMPANY: CompanyContact = {
+  phone: '+91 90974 59541',
+  email: 'info@kalopehomes.com',
+  website: 'www.kalopehomes.com',
+};
+
 export function createQuotation(): Quotation {
   const details: ClientDetails = {
     quotationNo: 'KH',
@@ -45,7 +53,13 @@ export function createQuotation(): Quotation {
     contactNumber: '',
     preparedBy: 'Kalope Homes',
   };
-  return { version: QUOTATION_VERSION, details, sections: [createSection()], discount: '' };
+  return {
+    version: QUOTATION_VERSION,
+    details,
+    company: { ...DEFAULT_COMPANY },
+    sections: [createSection()],
+    discount: '',
+  };
 }
 
 // ---------------------------------------------------------------------------

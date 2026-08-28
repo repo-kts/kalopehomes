@@ -1,6 +1,6 @@
 import { formatArea, formatCurrency } from '@/lib/format';
 import type { QuotationActions } from '@/lib/use-quotation';
-import type { ClientDetails, Quotation, QuotationTotals } from '@/types/quotation';
+import type { ClientDetails, CompanyContact, Quotation, QuotationTotals } from '@/types/quotation';
 import { SectionEditor } from './SectionEditor';
 
 const DETAIL_FIELDS: {
@@ -15,6 +15,12 @@ const DETAIL_FIELDS: {
   { key: 'projectLocation', label: 'Project Location', placeholder: 'Pulpar, Biharsharif' },
   { key: 'contactNumber', label: 'Contact Number', placeholder: '8800680879' },
   { key: 'preparedBy', label: 'Prepared By', placeholder: 'Kalope Homes' },
+];
+
+const CONTACT_FIELDS: { key: keyof CompanyContact; label: string; placeholder: string }[] = [
+  { key: 'phone', label: 'Phone', placeholder: '+91 90974 59541' },
+  { key: 'email', label: 'Email', placeholder: 'info@kalopehomes.com' },
+  { key: 'website', label: 'Website', placeholder: 'www.kalopehomes.com' },
 ];
 
 export interface BuilderPanelProps {
@@ -59,6 +65,28 @@ export function BuilderPanel({ quotation, totals, actions }: BuilderPanelProps) 
       <button type="button" className="btn btn--wide" onClick={() => actions.addSection()}>
         Add another table
       </button>
+
+      <section className="card">
+        <header className="card__head">
+          <h2>Letterhead contact</h2>
+        </header>
+        <div className="fields">
+          {CONTACT_FIELDS.map((field) => (
+            <label className="field" key={field.key}>
+              <span>{field.label}</span>
+              <input
+                className="input"
+                value={quotation.company[field.key]}
+                placeholder={field.placeholder}
+                onChange={(event) => actions.setCompany(field.key, event.target.value)}
+              />
+            </label>
+          ))}
+        </div>
+        <p className="hint">
+          Printed in the footer of every page. Clearing a field removes that line and its icon.
+        </p>
+      </section>
 
       <section className="card">
         <header className="card__head">

@@ -1,4 +1,4 @@
-import { QUOTATION_VERSION } from '@/lib/quotation';
+import { DEFAULT_COMPANY, QUOTATION_VERSION } from '@/lib/quotation';
 import type { Quotation } from '@/types/quotation';
 
 /**
@@ -15,6 +15,7 @@ export const SAMPLE_QUOTATION: Quotation = {
     contactNumber: '8800680879',
     preparedBy: 'Kalope Homes',
   },
+  company: { ...DEFAULT_COMPANY },
   sections: [
     {
       id: 'sample-kitchen',
