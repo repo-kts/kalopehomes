@@ -43,10 +43,23 @@ its tabs, and the unit/category resolution all follow from the data.
 
 ## How the page is produced
 
-- **Letterhead** — `src/assets/letterhead.png` is page 1 of `Kalope Homes LH.pdf`
-  rendered at 300 dpi and placed as an `<img>` behind every page. An `<img>`
-  rather than a CSS background, because browsers drop background images unless
-  the reader ticks "Background graphics" in the print dialog.
+- **Letterhead** — `src/assets/letterhead.png` is the Kalope Homes letterhead
+  — header band, watermark and footer — lifted verbatim from
+  `KH114_Chandan.pdf`, which carries it as one 1448 × 2048 background image
+  repeated on all five pages (~175 dpi over A4). Taking the embedded image
+  rather than re-rendering the page keeps the branding pixel-identical to the
+  approved document. To restore it if it ever goes missing:
+
+  ```python
+  import pymupdf
+  doc = pymupdf.open("KH114_Chandan.pdf")
+  pymupdf.Pixmap(doc, doc[0].get_images(full=True)[0][0]).save("src/assets/letterhead.png")
+  ```
+
+  It is placed as an `<img>` behind every page rather than a CSS background,
+  because browsers drop background images unless the reader ticks "Background
+  graphics" in the print dialog.
+
 - **Geometry** — [`src/styles/document.css`](src/styles/document.css) carries the
   measurements traced from the approved PDF: 25.4 mm side margins, a 48.5 mm top,
   a 168.6 mm table, and the type scale (18 pt headings, 13 pt sub-headings, 11 pt

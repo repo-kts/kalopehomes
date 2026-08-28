@@ -1,8 +1,9 @@
 /*
  * The printed quotation. Every measurement here is traced from the approved
  * document (KH114_Chandan.pdf) rendered at 110 dpi, where 1 px = 0.2305 mm.
- * The letterhead — header band, watermark and footer — is the source PDF page
- * itself, rendered at 300 dpi, so branding cannot drift from the original.
+ * The letterhead — header band, watermark and footer — is the background image
+ * embedded in the source PDF, used verbatim, so branding cannot drift from the
+ * original.
  */
 
 .page {

@@ -5,9 +5,13 @@ import logo from '../public/logo.png';
 /**
  * The Kalope Homes logo (from kalopehomes.com/logo-full.png).
  *
- * Imported statically so Next reads the real intrinsic size (500x500) and
- * keeps the aspect ratio exact; replacing `public/logo.png` updates it
- * automatically.
+ * The file is cropped to the artwork's bounding box (338x180). The supplied
+ * PNG was a 500x500 square with the lockup floating in the middle, so 64% of
+ * its height was transparent padding and every height class was mostly
+ * sizing empty space.
+ *
+ * Imported statically so Next reads the real intrinsic size and keeps the
+ * aspect ratio exact; replacing `public/logo.png` updates it automatically.
  */
 export function Logo() {
   return (
@@ -15,8 +19,8 @@ export function Logo() {
       src={logo}
       alt="Kalope Homes"
       priority
-      sizes="(max-width: 640px) 64px, 80px"
-      className="h-20 w-auto sm:h-24"
+      sizes="(max-width: 640px) 90px, 105px"
+      className="h-12 w-auto -translate-y-0.5 sm:h-14"
     />
   );
 }

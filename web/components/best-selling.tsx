@@ -52,7 +52,7 @@ export function BestSelling() {
                 }`}
               >
                 <div className="kh-zoom absolute inset-0" style={delay((i % 3) * 0.1)}>
-                  <div className="h-full w-full transition-transform duration-700 ease-out group-hover:scale-[1.04]">
+                  <div className="relative h-full w-full transition-transform duration-700 ease-out group-hover:scale-[1.04]">
                     <Image
                       src={item.src}
                       alt={item.alt}

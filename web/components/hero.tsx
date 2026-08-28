@@ -25,7 +25,7 @@ export function Hero() {
         sizes="100vw"
         className="object-cover"
       />
-      <HeroVideo src={hero.video} poster={hero.image.src} />
+      <HeroVideo src={hero.video} fallback={hero.videoFallback} poster={hero.image.src} />
 
       {/* Keeps the headline legible across the left of the frame. */}
       <div className="from-paper/80 via-paper/60 to-paper/40 lg:from-paper/60 lg:via-paper/25 pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r lg:to-transparent" />

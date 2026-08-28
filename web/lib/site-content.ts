@@ -63,6 +63,7 @@ export const hero = {
     alt: 'The entrance and living room of a completed Kalope Homes interior',
   },
   video: '/hero.webm',
+  videoFallback: '/hero.mp4',
 } as const;
 
 export type Room = {
