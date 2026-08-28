@@ -25,5 +25,8 @@ npm-debug.log*
 *.png
 *.mp4
 
-# ...but static assets served by the web app must be committed.
+# ...but assets the apps actually ship must be committed.
 !web/public/**
+# The quotation letterhead and its footer icons are imported by the document
+# renderer — without them the app does not build.
+!quotation/src/assets/**
