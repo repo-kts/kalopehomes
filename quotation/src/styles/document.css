@@ -134,7 +134,7 @@
   font-style: italic;
 }
 
-/* Lists — marker at 6.35 mm, text at 12.7 mm from the text edge. */
+/* Lists — marker at 8 mm, text at 12.6 mm from the text edge. */
 .doc-list {
   margin: 0;
   padding: 0 0 0 12.7mm;
