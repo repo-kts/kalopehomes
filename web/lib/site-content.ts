@@ -15,26 +15,26 @@ export type NavLink = { label: string; href: string; children?: NavLink[] };
  * per-category pages yet. Give each one a real `href` once those exist.
  */
 export const designCategories: NavLink[] = [
-  { label: 'Modular kitchen designs', href: '#best-selling' },
-  { label: 'Wardrobe designs', href: '#best-selling' },
-  { label: 'Living room designs', href: '#best-selling' },
-  { label: 'Master bedroom designs', href: '#best-selling' },
-  { label: 'Bathroom designs', href: '#best-selling' },
-  { label: 'TV unit designs', href: '#best-selling' },
-  { label: 'False ceiling designs', href: '#best-selling' },
-  { label: 'Pooja room designs', href: '#best-selling' },
-  { label: 'Dining room designs', href: '#best-selling' },
-  { label: 'Kids bedroom designs', href: '#best-selling' },
-  { label: 'Home office designs', href: '#best-selling' },
-  { label: 'Office cabin designs', href: '#best-selling' },
+  { label: 'Modular kitchen designs', href: '/#best-selling' },
+  { label: 'Wardrobe designs', href: '/#best-selling' },
+  { label: 'Living room designs', href: '/#best-selling' },
+  { label: 'Master bedroom designs', href: '/#best-selling' },
+  { label: 'Bathroom designs', href: '/#best-selling' },
+  { label: 'TV unit designs', href: '/#best-selling' },
+  { label: 'False ceiling designs', href: '/#best-selling' },
+  { label: 'Pooja room designs', href: '/#best-selling' },
+  { label: 'Dining room designs', href: '/#best-selling' },
+  { label: 'Kids bedroom designs', href: '/#best-selling' },
+  { label: 'Home office designs', href: '/#best-selling' },
+  { label: 'Office cabin designs', href: '/#best-selling' },
 ];
 
 export const nav: NavLink[] = [
-  { label: 'Design', href: '#projects', children: designCategories },
-  { label: 'Best selling', href: '#best-selling' },
-  { label: 'Services', href: '#services' },
-  { label: 'Studio', href: '#studio' },
-  { label: 'Reviews', href: '#reviews' },
+  { label: 'Design', href: '/#projects', children: designCategories },
+  { label: 'Best selling', href: '/#best-selling' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Studio', href: '/gallery' },
+  { label: 'Reviews', href: '/#reviews' },
 ];
 
 export const site = {
@@ -372,3 +372,132 @@ export const consultation = {
   phone: '+91 00000 00000',
   address: 'Add your studio address here',
 } as const;
+
+/* ------------------------------------------------------------------ *
+ * Gallery
+ *
+ * The masonry page at /gallery. `span` sets how tall each tile is drawn so
+ * the columns interlock rather than forming neat rows — a uniform grid is
+ * what makes a gallery read as a spreadsheet.
+ * ------------------------------------------------------------------ */
+export type GalleryItem = {
+  label: string;
+  src: string;
+  alt: string;
+  /** Aspect ratio class applied to the tile. */
+  shape: 'tall' | 'wide' | 'square';
+};
+
+const u = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?q=80&w=1000&auto=format&fit=crop`;
+
+export const gallery: GalleryItem[] = [
+  {
+    label: 'Living room',
+    src: u('1600210491892-03d54c0aaf87'),
+    alt: 'A calm living room with warm neutral furnishings',
+    shape: 'tall',
+  },
+  {
+    label: 'Modular kitchen',
+    src: u('1556909212-d5b604d0c90d'),
+    alt: 'A modular kitchen with pale cabinetry and stone counters',
+    shape: 'square',
+  },
+  {
+    label: 'Master bedroom',
+    src: u('1590381105924-c72589b9ef3f'),
+    alt: 'A primary bedroom suite in soft neutrals',
+    shape: 'wide',
+  },
+  {
+    label: 'Wardrobe',
+    src: u('1558997519-83ea9252edf8'),
+    alt: 'A fitted wardrobe with open shelving',
+    shape: 'tall',
+  },
+  {
+    label: 'Office interior',
+    src: u('1497366216548-37526070297c'),
+    alt: 'An open-plan office with workstations',
+    shape: 'wide',
+  },
+  {
+    label: 'TV & media unit',
+    src: u('1598928506311-c55ded91a20c'),
+    alt: 'A living room with a built-in media wall',
+    shape: 'square',
+  },
+  {
+    label: 'Dining',
+    src: u('1599696848652-f0ff23bc911f'),
+    alt: 'A kitchen and dining area with pendant lighting',
+    shape: 'tall',
+  },
+  {
+    label: 'Staircase',
+    src: u('1502005229762-cf1b2da7c5d6'),
+    alt: 'A sculptural staircase lit from a skylight above',
+    shape: 'tall',
+  },
+  {
+    label: 'Bath & vanity',
+    src: u('1584622650111-993a426fbf0a'),
+    alt: 'A bathroom vanity with a mirror cabinet',
+    shape: 'square',
+  },
+  {
+    label: 'Kitchen',
+    src: u('1581783458534-001a466b5487'),
+    alt: 'A minimal kitchen with stone surfaces and flush cabinetry',
+    shape: 'wide',
+  },
+  {
+    label: 'Bedroom',
+    src: u('1522708323590-d24dbb6b0267'),
+    alt: 'A bedroom with panelled headboard and side tables',
+    shape: 'square',
+  },
+  {
+    label: 'Full home',
+    src: u('1564078516393-cf04bd966897'),
+    alt: 'The living space of a completed full-home project',
+    shape: 'tall',
+  },
+  {
+    label: 'Living room',
+    src: u('1616486338812-3dadae4b4ace'),
+    alt: 'A sunlit living room with layered textures and built-in joinery',
+    shape: 'wide',
+  },
+  {
+    label: 'Guest bedroom',
+    src: u('1578683010236-d716f9a3f461'),
+    alt: 'A guest bedroom in a soft neutral palette',
+    shape: 'square',
+  },
+  {
+    label: 'Workspace',
+    src: u('1524758631624-e2822e304c36'),
+    alt: 'A meeting room with a long table and soft lighting',
+    shape: 'tall',
+  },
+  {
+    label: 'False ceiling',
+    src: u('1567016432779-094069958ea5'),
+    alt: 'A living room with a layered false ceiling and cove lighting',
+    shape: 'wide',
+  },
+  {
+    label: 'Storage',
+    src: u('1595428774223-ef52624120d2'),
+    alt: 'Fitted storage with panelled doors',
+    shape: 'square',
+  },
+  {
+    label: 'Foyer',
+    src: u('1600607687939-ce8a6c25118c'),
+    alt: 'An entrance foyer with a console and mirror',
+    shape: 'tall',
+  },
+];

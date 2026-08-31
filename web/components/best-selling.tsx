@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 
 import { Reveal } from '@/components/reveal';
@@ -48,9 +49,9 @@ export function BestSelling() {
             const feature = i === 0;
             const rightColumn = i % 2 === 1;
             return (
-              <a
+              <Link
                 key={item.name}
-                href="#book"
+                href="/#book"
                 className={`group relative flex flex-col lg:mt-0 lg:block ${
                   rightColumn ? 'mt-9' : ''
                 } ${feature ? 'lg:col-span-2 lg:row-span-2 lg:h-auto' : 'lg:h-[10rem]'}`}
@@ -112,7 +113,7 @@ export function BestSelling() {
                     Enquire →
                   </span>
                 </div>
-              </a>
+              </Link>
             );
           })}
         </div>

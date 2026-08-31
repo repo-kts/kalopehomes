@@ -1,10 +1,15 @@
+import Link from 'next/link';
 import { consultation, nav, services, site } from '@/lib/site-content';
 
 /**
  * The logo artwork is a light-ground mark, so the footer uses the wordmark as
  * type rather than dropping the image onto ink.
  */
-export function SiteFooter() {
+/**
+ * `showCta` exists for pages that already close with a booking prompt of their
+ * own — two of them stacked a few hundred pixels apart just reads as a bug.
+ */
+export function SiteFooter({ showCta = true }: { showCta?: boolean } = {}) {
   const year = new Date().getFullYear();
 
   return (
@@ -38,12 +43,12 @@ export function SiteFooter() {
           <ul className="space-y-2 text-[14px]">
             {services.map((service) => (
               <li key={service.num}>
-                <a
-                  href="#services"
+                <Link
+                  href="/#services"
                   className="hover:text-accent block py-1 transition-colors duration-300"
                 >
                   {service.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -64,12 +69,14 @@ export function SiteFooter() {
             {site.email}
           </a>
           <p className="text-muted-dim mt-3 text-[14px]">{consultation.address}</p>
-          <a
-            href="#book"
-            className="bg-accent text-ink hover:bg-paper mt-5 inline-block px-5 py-2.5 text-[11.5px] tracking-[0.16em] uppercase transition-colors duration-300"
-          >
-            Book a consultancy
-          </a>
+          {showCta && (
+            <Link
+              href="/#book"
+              className="bg-accent text-ink hover:bg-paper mt-5 inline-block px-5 py-2.5 text-[11.5px] tracking-[0.16em] uppercase transition-colors duration-300"
+            >
+              Book a consultancy
+            </Link>
+          )}
         </div>
       </div>
 

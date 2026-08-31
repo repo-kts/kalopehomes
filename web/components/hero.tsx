@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import Image from 'next/image';
 
 import { HeroVideo } from '@/components/hero-video';
@@ -61,12 +62,12 @@ export function Hero() {
           </p>
 
           <div className="kh-fade-up mt-7 flex flex-wrap gap-3" style={delay(1.18)}>
-            <a
-              href="#projects"
+            <Link
+              href="/#projects"
               className="bg-ink text-paper hover:bg-accent hover:text-ink px-7 py-3.5 text-[12px] tracking-[0.16em] uppercase transition-colors duration-300"
             >
               View projects
-            </a>
+            </Link>
           </div>
         </div>
       </div>
