@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, type FocusEvent } from 'react';
+import { useCallback, useEffect, useState, type FocusEvent } from 'react';
 
 import { Logo } from '@/components/logo';
 import { nav } from '@/lib/site-content';
@@ -26,10 +26,43 @@ function Chevron({ open }: { open: boolean }) {
   );
 }
 
+function ArrowRight({ className = '' }: { className?: string }) {
+  return (
+    <svg
+      width="14"
+      height="10"
+      viewBox="0 0 14 10"
+      aria-hidden="true"
+      fill="none"
+      className={className}
+    >
+      <path
+        d="M0 5h12M8.5 1l4 4-4 4"
+        stroke="currentColor"
+        strokeWidth="1.3"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+/** Design categories shown before the list asks to be expanded. */
+const DESIGN_PREVIEW = 5;
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const [showAllDesigns, setShowAllDesigns] = useState(false);
   const [designOpen, setDesignOpen] = useState(false);
   const [mobileDesignOpen, setMobileDesignOpen] = useState(false);
+
+  // Closing also folds the submenu, so the menu reopens tidy rather than
+  // however it was last left.
+  const closeMenu = useCallback(() => {
+    setOpen(false);
+    setMobileDesignOpen(false);
+    setShowAllDesigns(false);
+  }, []);
 
   // Keep the page from scrolling behind the open mobile menu.
   useEffect(() => {
@@ -143,64 +176,87 @@ export function SiteHeader() {
         id="mobile-nav"
         className={open ? 'bg-paper text-ink fixed inset-0 z-50 flex flex-col xl:hidden' : 'hidden'}
       >
-        <div className="flex items-center justify-between px-6 py-4 sm:px-10">
-          <Logo />
+        <div className="flex items-center justify-between px-5 py-4 sm:px-8">
+          <a href="#hero" onClick={closeMenu}>
+            <Logo />
+          </a>
           <button
             type="button"
-            onClick={() => setOpen(false)}
-            className="text-[12px] tracking-[0.16em] uppercase"
+            onClick={closeMenu}
+            className="border-rule text-muted hover:border-ink hover:text-ink rounded-full border px-4 py-2 text-[11px] tracking-[0.16em] uppercase transition-colors duration-300"
           >
             Close
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 sm:px-10">
-          <div className="flex min-h-full flex-col justify-center gap-1 py-6">
-            {nav.map((link) =>
-              link.children ? (
-                <div key={link.href} className="border-rule border-b">
-                  <button
-                    type="button"
-                    onClick={() => setMobileDesignOpen((value) => !value)}
-                    aria-expanded={mobileDesignOpen}
-                    className="flex w-full items-center justify-between py-4 font-serif text-3xl"
+        <div className="flex-1 overflow-y-auto px-5 pb-6 sm:px-8">
+          <div className="flex min-h-full flex-col justify-center">
+            <div className="divide-rule bg-paper-deep divide-y overflow-hidden rounded-2xl">
+              {nav.map((link) =>
+                link.children ? (
+                  <div key={link.href}>
+                    <button
+                      type="button"
+                      onClick={() => setMobileDesignOpen((value) => !value)}
+                      aria-expanded={mobileDesignOpen}
+                      className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left text-[15px] font-medium"
+                    >
+                      {link.label}
+                      <Chevron open={mobileDesignOpen} />
+                    </button>
+                    {mobileDesignOpen && (
+                      <div className="border-rule mx-5 mb-4 border-t pt-3">
+                        <ul className="grid gap-y-0.5 sm:grid-cols-2 sm:gap-x-5">
+                          {(showAllDesigns
+                            ? link.children
+                            : link.children.slice(0, DESIGN_PREVIEW)
+                          ).map((child) => (
+                            <li key={child.label}>
+                              <a
+                                href={child.href}
+                                onClick={closeMenu}
+                                className="text-body hover:text-accent-deep block py-2 text-[14px] transition-colors duration-200"
+                              >
+                                {child.label}
+                              </a>
+                            </li>
+                          ))}
+                        </ul>
+                        {link.children.length > DESIGN_PREVIEW && (
+                          <button
+                            type="button"
+                            onClick={() => setShowAllDesigns((value) => !value)}
+                            className="text-accent-deep hover:text-ink mt-2.5 text-[12px] font-medium tracking-[0.12em] uppercase transition-colors duration-200"
+                          >
+                            {showAllDesigns
+                              ? 'Show fewer'
+                              : `+ ${link.children.length - DESIGN_PREVIEW} more designs`}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={closeMenu}
+                    className="hover:text-accent-deep flex items-center justify-between gap-4 px-5 py-4 text-[15px] font-medium transition-colors duration-200"
                   >
                     {link.label}
-                    <Chevron open={mobileDesignOpen} />
-                  </button>
-                  {mobileDesignOpen && (
-                    <ul className="grid grid-cols-2 gap-x-5 gap-y-1 pb-5">
-                      {link.children.map((child) => (
-                        <li key={child.label}>
-                          <a
-                            href={child.href}
-                            onClick={() => setOpen(false)}
-                            className="text-body hover:text-accent-deep block py-1.5 text-[13px]"
-                          >
-                            {child.label}
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              ) : (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setOpen(false)}
-                  className="border-rule hover:text-accent-deep border-b py-4 font-serif text-3xl transition-colors duration-300"
-                >
-                  {link.label}
-                </a>
-              ),
-            )}
+                    <ArrowRight className="text-muted" />
+                  </a>
+                ),
+              )}
+            </div>
+
             <a
               href="#book"
-              onClick={() => setOpen(false)}
-              className="bg-ink text-paper hover:bg-accent hover:text-ink mt-6 px-6 py-4 text-center text-[13px] tracking-[0.16em] uppercase transition-colors duration-300"
+              onClick={closeMenu}
+              className="bg-accent text-ink hover:bg-ink hover:text-paper mt-4 flex items-center justify-center gap-2.5 rounded-full px-6 py-4 text-[12.5px] font-medium tracking-[0.14em] uppercase transition-colors duration-300"
             >
               Book a consultancy
+              <ArrowRight />
             </a>
           </div>
         </div>

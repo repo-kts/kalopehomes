@@ -16,8 +16,10 @@
   --color-accent: #e8822b;
   --color-accent-deep: #a8530c;
 
-  /* Logo teal, for the mark and secondary emphasis. */
+  /* Logo teal, for the mark and secondary emphasis. `teal-deep` is the same
+     hue darkened so it can carry small text against paper. */
   --color-teal: #17817b;
+  --color-teal-deep: #12655f;
 
   --color-body: #2e4a47;
   --color-muted: #55706d;
@@ -232,95 +234,27 @@ body {
 }
 
 /* ------------------------------------------------------------------ *
- * Reviews marquee
+ * Edge fade
  *
- * The track holds the review list four times and shifts by exactly one
- * list-width (-25%), so the loop is seamless and the tail never runs into
- * view on wide screens. Cards carry their own right margin rather than a
- * flex `gap`, which keeps that width a clean fraction.
+ * Softens both ends of a horizontal track so cards dissolve rather than
+ * getting chopped at the section edge.
  * ------------------------------------------------------------------ */
-@keyframes kh-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-25%);
-  }
-}
-
-.kh-marquee-viewport {
-  overflow: hidden;
+.kh-edge-fade {
   -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
 }
 
-.kh-marquee {
-  animation: kh-marquee 50s linear infinite;
+/* ------------------------------------------------------------------ *
+ * Swipe track
+ *
+ * The scrollbar is hidden because the section supplies its own arrows and
+ * the cards snap; the container stays keyboard-scrollable via `tabindex`.
+ * ------------------------------------------------------------------ */
+.kh-swipe {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-/* Let people stop the strip to finish reading a review. */
-.kh-marquee:hover,
-.kh-marquee:focus-within {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kh-marquee {
-    animation: none;
-  }
-  .kh-marquee-viewport {
-    overflow-x: auto;
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-}
-
-/* Header dropdown entry. */
-@keyframes kh-menu-in {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.kh-menu {
-  animation: kh-menu-in 0.22s var(--kh-ease) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kh-menu {
-    animation: none;
-  }
-}
-
-/* Vertical rule draw — the stacked Process timeline below `lg`. */
-@keyframes kh-line-y {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
-}
-
-.kh-line-y {
-  transform: scaleY(0);
-  transform-origin: top;
-}
-
-[data-shown='true'] .kh-line-y {
-  animation: kh-line-y 0.9s var(--kh-ease) var(--kh-d, 0s) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kh-line-y {
-    transform: scaleY(1);
-  }
-  [data-shown='true'] .kh-line-y {
-    animation: none;
-  }
+.kh-swipe::-webkit-scrollbar {
+  display: none;
 }

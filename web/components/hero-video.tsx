@@ -34,6 +34,10 @@ export function HeroVideo({
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+    // Portrait phones crop a 16:9 clip to a narrow strip and pay several
+    // megabytes for it. They keep the poster instead.
+    if (!window.matchMedia('(min-width: 768px)').matches) return;
+
     const timer = setTimeout(() => {
       el.play()
         .then(() => setReady(true))
