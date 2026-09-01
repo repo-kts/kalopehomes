@@ -3,14 +3,15 @@
 import { useState, type FormEvent } from 'react';
 
 import { Reveal } from '@/components/reveal';
+import { SelectField } from '@/components/select-field';
 import { consultation, site } from '@/lib/site-content';
 import { delay } from '@/lib/motion';
 
 type Errors = Partial<Record<'name' | 'phone' | 'email' | 'projectType', string>>;
 
 const FIELD =
-  'w-full border border-rule bg-paper px-4 py-3 text-[15px] text-ink outline-none transition-colors duration-200 focus:border-ink';
-const LABEL = 'mb-2 block text-[12px] tracking-[0.16em] text-muted uppercase';
+  'w-full border-b border-rule bg-transparent px-0 py-3 text-[16px] text-ink outline-none transition-colors duration-200 focus:border-ink';
+const LABEL = 'mb-1.5 block text-[11px] tracking-[0.14em] text-muted uppercase';
 
 /**
  * T-09 · Book a consultancy.
@@ -21,6 +22,7 @@ const LABEL = 'mb-2 block text-[12px] tracking-[0.16em] text-muted uppercase';
  */
 export function BookConsultation() {
   const [errors, setErrors] = useState<Errors>({});
+  const [projectType, setProjectType] = useState('');
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -173,26 +175,18 @@ export function BookConsultation() {
           </div>
 
           <div className="mt-5">
-            <label className={LABEL} htmlFor="projectType">
-              Project type
-            </label>
-            <select
-              id="projectType"
-              name="projectType"
-              defaultValue=""
-              className={FIELD}
-              aria-invalid={Boolean(errors.projectType)}
-              aria-describedby={errors.projectType ? 'projectType-error' : undefined}
-            >
-              <option value="" disabled>
-                Select one…
-              </option>
-              {consultation.projectTypes.map((type) => (
-                <option key={type} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
+            <SelectField
+              label="Project type"
+              placeholder="Select one…"
+              options={consultation.projectTypes}
+              value={projectType}
+              onChange={setProjectType}
+              invalid={Boolean(errors.projectType)}
+              describedBy={errors.projectType ? 'projectType-error' : undefined}
+              labelClassName={LABEL}
+            />
+            {/* Carries the choice so the form still reads it off FormData. */}
+            <input type="hidden" name="projectType" value={projectType} />
             {errors.projectType && (
               <p id="projectType-error" className="text-accent-deep mt-1.5 text-[13px]">
                 {errors.projectType}

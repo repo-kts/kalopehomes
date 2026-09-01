@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { rooms } from '@/lib/site-content';
 
@@ -14,8 +14,52 @@ const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
  * T-06 · Room sequence — a tall section with a sticky viewport. Scroll
  * progress wipes each room over the one before it while the caption swaps.
  */
+/** Time each room holds before the phone view moves to the next. */
+const ROOM_MS = 4000;
+
+/** How long auto-advance waits after someone picks a room themselves. */
+const HOLD_MS = 10000;
+
 export function RoomSequence() {
   const sectionRef = useRef<HTMLElement>(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const holdUntilRef = useRef(0);
+  const [room, setRoom] = useState(0);
+
+  // Phones cycle through the rooms on their own. It only runs while the
+  // section is actually on screen, and stands down for a while whenever
+  // someone picks a room themselves.
+  useEffect(() => {
+    const el = pickerRef.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let visible = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        visible = entries[0]?.isIntersecting ?? false;
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(el);
+
+    const timer = window.setInterval(() => {
+      if (!visible) return;
+      if (Date.now() < holdUntilRef.current) return;
+      if (!window.matchMedia('(max-width: 1023px)').matches) return;
+      setRoom((current) => (current + 1) % rooms.length);
+    }, ROOM_MS);
+
+    return () => {
+      window.clearInterval(timer);
+      observer.disconnect();
+    };
+  }, []);
+
+  const pickRoom = useCallback((index: number) => {
+    setRoom(index);
+    holdUntilRef.current = Date.now() + HOLD_MS;
+  }, []);
   const activeRef = useRef(-1);
 
   useEffect(() => {
@@ -27,6 +71,7 @@ export function RoomSequence() {
 
     const update = () => {
       frame = 0;
+      if (!window.matchMedia('(min-width: 1024px)').matches) return;
       const rect = section.getBoundingClientRect();
       const travel = rect.height - window.innerHeight;
       if (travel <= 0) return;
@@ -81,8 +126,71 @@ export function RoomSequence() {
   }, []);
 
   return (
-    <section id="rooms" ref={sectionRef} className="bg-ink-deep relative h-[260vh] md:h-[340vh]">
-      <div className="sticky top-0 h-svh overflow-hidden lg:grid lg:grid-cols-[0.85fr_1.15fr]">
+    <section id="rooms" ref={sectionRef} className="bg-ink-deep relative lg:h-[340vh]">
+      {/*
+        Phones get a plain vertical walkthrough. The sticky version below
+        needs 340vh of scroll to play four rooms, which on a handset is a very
+        long hostage-taking of the scrollbar for one section.
+      */}
+      {/*
+        Phones pick a room instead of scrolling through one. The sticky
+        version below needs 340vh to play four rooms, and stacking them
+        vertically instead just traded scroll-jacking for a long column. This
+        holds the whole section to roughly one screen.
+      */}
+      <div ref={pickerRef} className="text-paper px-6 py-16 sm:px-10 lg:hidden">
+        <div className="kh-fade-up mb-6 flex items-center gap-3">
+          <span className="bg-accent h-0.5 w-9 shrink-0" />
+          <span className="text-muted-dim text-[10px] tracking-[0.16em] uppercase">
+            Walk through the home
+          </span>
+        </div>
+
+        <div className="relative aspect-[4/5] overflow-hidden rounded-2xl">
+          {rooms.map((item, i) => (
+            <div
+              key={item.name}
+              aria-hidden={i !== room}
+              className={`absolute inset-0 transition-opacity duration-500 ease-out ${
+                i === room ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              <Image src={item.src} alt={item.alt} fill sizes="100vw" className="object-cover" />
+            </div>
+          ))}
+        </div>
+
+        <div className="kh-swipe -mx-6 mt-4 flex gap-2 overflow-x-auto px-6 sm:-mx-10 sm:px-10">
+          {rooms.map((item, i) => (
+            <button
+              key={item.name}
+              type="button"
+              onClick={() => pickRoom(i)}
+              aria-pressed={i === room}
+              className={`shrink-0 rounded-full border px-4 py-2 text-[13px] transition-colors duration-300 ${
+                i === room
+                  ? 'border-accent bg-accent text-ink'
+                  : 'border-rule-dark text-muted-light'
+              }`}
+            >
+              {item.name.replace(/^The /, '')}
+            </button>
+          ))}
+        </div>
+
+        {/* Fixed height so switching rooms does not shunt the page around. */}
+        <div aria-live="polite" className="mt-5 min-h-[9rem]">
+          <span className="text-accent text-[11px] tracking-[0.2em] uppercase">
+            {rooms[room].num}
+          </span>
+          <h3 className="mt-1.5 font-serif text-[26px] leading-tight font-normal">
+            {rooms[room].name}
+          </h3>
+          <p className="text-muted-light mt-2 text-[15px] leading-[1.65]">{rooms[room].desc}</p>
+        </div>
+      </div>
+
+      <div className="sticky top-0 hidden h-svh overflow-hidden lg:grid lg:grid-cols-[0.85fr_1.15fr]">
         <div className="absolute inset-0 lg:relative lg:inset-auto lg:order-2">
           {rooms.map((room, i) => (
             <div

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
 import { Reveal } from '@/components/reveal';
@@ -108,13 +109,13 @@ export function Services() {
           <div className="kh-line-x bg-rule h-px" style={delay(0.55)} />
         </div>
 
-        <a
-          href="#book"
+        <Link
+          href="/#book"
           className="kh-fade-up border-ink hover:bg-ink hover:text-paper mt-9 inline-block border px-7 py-3.5 text-[12px] tracking-[0.16em] uppercase transition-colors duration-300"
           style={delay(0.5)}
         >
           Discuss your project
-        </a>
+        </Link>
       </div>
     </Reveal>
   );
