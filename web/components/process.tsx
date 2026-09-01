@@ -19,7 +19,7 @@ export function Process() {
             How it runs
           </span>
         </div>
-        <h2 className="kh-fade-up font-serif text-[clamp(2.25rem,5vw,4rem)] font-normal">
+        <h2 className="kh-fade-up font-display text-[clamp(2.25rem,5vw,4rem)] font-normal">
           From drawing to done
         </h2>
       </div>
@@ -43,8 +43,8 @@ export function Process() {
                   style={delay(dot)}
                 />
                 <div className="kh-fade-up" style={delay(dot + 0.08)}>
-                  <span className="text-accent-deep font-serif text-[15px]">{step.num}</span>
-                  <h3 className="mt-2 mb-2.5 font-serif text-[26px] leading-tight font-normal">
+                  <span className="text-accent-deep font-display text-[15px]">{step.num}</span>
+                  <h3 className="font-display mt-2 mb-2.5 text-[26px] leading-tight font-normal">
                     {step.name}
                   </h3>
                   <p className="text-body text-[15px] leading-[1.7]">{step.desc}</p>

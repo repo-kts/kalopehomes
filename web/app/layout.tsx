@@ -1,17 +1,20 @@
 import type { Metadata } from 'next';
-import { Archivo, Marcellus } from 'next/font/google';
+import { Poppins, Roboto } from 'next/font/google';
 import './globals.css';
 
-const archivo = Archivo({
-  variable: '--font-archivo',
+// Matching livspace.com: Poppins for headings, Roboto for body.
+const poppins = Poppins({
+  variable: '--font-poppins',
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  // Headings all sit at 400. Livspace sets its own to 600 — add it here if
+  // you want that heavier look.
+  weight: '400',
 });
 
-const marcellus = Marcellus({
-  variable: '--font-marcellus',
+const roboto = Roboto({
+  variable: '--font-roboto',
   subsets: ['latin'],
-  weight: '400',
+  weight: ['400', '500'],
 });
 
 export const metadata: Metadata = {
@@ -35,7 +38,7 @@ const NO_SCRIPT_CSS = `
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={`${archivo.variable} ${marcellus.variable} h-full antialiased`}>
+    <html lang="en" className={`${roboto.variable} ${poppins.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col overflow-x-clip font-sans">
         {/*
           The reveal system hides content until JavaScript sets `data-shown`.

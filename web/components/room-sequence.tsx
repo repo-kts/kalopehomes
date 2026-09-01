@@ -183,7 +183,7 @@ export function RoomSequence() {
           <span className="text-accent text-[11px] tracking-[0.2em] uppercase">
             {rooms[room].num}
           </span>
-          <h3 className="mt-1.5 font-serif text-[26px] leading-tight font-normal">
+          <h3 className="font-display mt-1.5 text-[26px] leading-tight font-normal">
             {rooms[room].name}
           </h3>
           <p className="text-muted-light mt-2 text-[15px] leading-[1.65]">{rooms[room].desc}</p>
@@ -239,8 +239,8 @@ export function RoomSequence() {
                   transform: i === 0 ? 'translateY(0)' : 'translateY(24px)',
                 }}
               >
-                <div className="text-accent mb-3 font-serif text-[15px]">{room.num}</div>
-                <h3 className="mb-4 font-serif text-[clamp(2rem,6vw,3.625rem)] leading-[1.05] font-normal">
+                <div className="text-accent font-display mb-3 text-[15px]">{room.num}</div>
+                <h3 className="font-display mb-4 text-[clamp(2rem,6vw,3.625rem)] leading-[1.05] font-normal">
                   {room.name}
                 </h3>
                 <p className="text-muted-light max-w-[24rem] text-[15.5px] leading-[1.7]">

@@ -71,7 +71,7 @@ export function BookConsultation() {
             </span>
           </div>
 
-          <h2 className="kh-fade-up font-serif text-[clamp(2.25rem,5vw,4rem)] leading-[1.08] font-normal">
+          <h2 className="kh-fade-up font-display text-[clamp(2.25rem,5vw,4rem)] leading-[1.08] font-normal">
             {consultation.heading}
           </h2>
 
@@ -98,7 +98,7 @@ export function BookConsultation() {
           <div className="kh-fade-up border-rule mt-10 border-t pt-8" style={delay(0.6)}>
             <a
               href={`tel:${consultation.phone.replace(/\s/g, '')}`}
-              className="text-ink hover:text-accent-deep block font-serif text-2xl transition-colors duration-300"
+              className="text-ink hover:text-accent-deep font-display block text-2xl transition-colors duration-300"
             >
               {consultation.phone}
             </a>

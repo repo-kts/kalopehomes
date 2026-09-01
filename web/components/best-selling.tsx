@@ -31,7 +31,7 @@ export function BestSelling() {
                 Most requested
               </span>
             </div>
-            <h2 className="kh-fade-up font-serif text-[clamp(2.25rem,5vw,4rem)] font-normal">
+            <h2 className="kh-fade-up font-display text-[clamp(2.25rem,5vw,4rem)] font-normal">
               Best selling
             </h2>
           </div>
@@ -86,7 +86,7 @@ export function BestSelling() {
                     {item.category}
                   </span>
                   <h3
-                    className={`text-ink lg:text-paper mt-1 font-serif ${
+                    className={`text-ink lg:text-paper font-display mt-1 ${
                       feature
                         ? 'text-[17px] sm:text-[19px] lg:text-[23px]'
                         : 'text-[17px] lg:text-[16.5px]'

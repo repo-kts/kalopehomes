@@ -28,8 +28,8 @@
   --color-rule: #cad8d6;
   --color-rule-dark: #1c4340;
 
-  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-marcellus), Georgia, 'Times New Roman', serif;
+  --font-sans: var(--font-roboto), Arial, Helvetica, sans-serif;
+  --font-display: var(--font-poppins), var(--font-roboto), sans-serif;
 }
 
 :root {

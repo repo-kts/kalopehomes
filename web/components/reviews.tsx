@@ -75,7 +75,7 @@ export function Reviews() {
               In their words
             </span>
           </div>
-          <h2 className="kh-fade-up font-serif text-[clamp(2.25rem,5vw,4rem)] font-normal">
+          <h2 className="kh-fade-up font-display text-[clamp(2.25rem,5vw,4rem)] font-normal">
             Customer reviews
           </h2>
         </div>
@@ -120,23 +120,23 @@ export function Reviews() {
                   <div className="flex items-start justify-between gap-4">
                     <span
                       aria-hidden="true"
-                      className="text-accent-deep font-serif text-[38px] leading-[0.7]"
+                      className="text-accent-deep font-display text-[38px] leading-[0.7]"
                     >
                       &ldquo;
                     </span>
                     <Stars rating={review.rating} />
                   </div>
 
-                  <blockquote className="text-ink/85 mt-4 flex-1 font-serif text-[16px] leading-[1.6]">
+                  <blockquote className="text-ink/85 font-display mt-4 flex-1 text-[16px] leading-[1.6]">
                     {review.quote}
                   </blockquote>
 
                   <figcaption className="border-rule mt-7 flex items-start gap-3.5 border-t pt-5">
-                    <span className="bg-teal-deep text-paper flex size-10 shrink-0 items-center justify-center rounded-full font-serif text-[14px]">
+                    <span className="bg-teal-deep text-paper font-display flex size-10 shrink-0 items-center justify-center rounded-full text-[14px]">
                       {review.initials}
                     </span>
                     <span className="min-w-0">
-                      <span className="text-ink block font-serif text-[15.5px] leading-snug">
+                      <span className="text-ink font-display block text-[15.5px] leading-snug">
                         {review.name}
                       </span>
                       <span className="text-muted mt-1 block text-[12px] leading-snug">

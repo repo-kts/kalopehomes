@@ -34,7 +34,7 @@ export default function GalleryPage() {
                 Our work
               </span>
             </div>
-            <h1 className="kh-fade-up font-serif text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.05] font-normal">
+            <h1 className="kh-fade-up font-display text-[clamp(2.25rem,6vw,4.5rem)] leading-[1.05] font-normal">
               Gallery
             </h1>
             <p
@@ -75,7 +75,7 @@ export default function GalleryPage() {
           </Reveal>
 
           <Reveal className="border-rule mt-14 flex flex-col items-start gap-5 border-t pt-10 sm:flex-row sm:items-center sm:justify-between">
-            <p className="kh-fade-up font-serif text-[clamp(1.5rem,3.5vw,2.25rem)] leading-tight">
+            <p className="kh-fade-up font-display text-[clamp(1.5rem,3.5vw,2.25rem)] leading-tight">
               Something here for your place?
             </p>
             <Link
