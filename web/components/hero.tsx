@@ -43,7 +43,7 @@ export function Hero() {
 
       <div className="relative z-10 flex flex-1 items-center px-6 pb-16 sm:px-10 md:px-12 lg:pb-20">
         <div className="max-w-[42rem]">
-          <h1 className="font-serif text-[clamp(1.75rem,min(5vw,7.4vh),3.75rem)] leading-[1.02] font-normal tracking-[-0.01em]">
+          <h1 className="font-display text-[clamp(1.75rem,min(5vw,7.4vh),3.75rem)] leading-[1.02] font-normal tracking-[-0.01em]">
             {heroHeadline.map((line, i) => (
               <span key={line.text} className="block overflow-hidden">
                 <span className="kh-rise block" style={delay(0.7 + i * 0.14)}>

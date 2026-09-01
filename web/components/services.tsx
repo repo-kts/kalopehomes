@@ -43,7 +43,7 @@ export function Services() {
                 What we do
               </span>
             </div>
-            <h2 className="kh-fade-up font-serif text-[clamp(2.25rem,5vw,4rem)] font-normal">
+            <h2 className="kh-fade-up font-display text-[clamp(2.25rem,5vw,4rem)] font-normal">
               Services provided
             </h2>
           </div>
@@ -74,14 +74,14 @@ export function Services() {
                     className="group flex w-full items-center gap-4 py-5 text-left sm:gap-6"
                   >
                     <span
-                      className={`font-serif text-[13px] transition-colors duration-300 ${
+                      className={`font-display text-[13px] transition-colors duration-300 ${
                         isOpen ? 'text-accent-deep' : 'text-muted'
                       }`}
                     >
                       {service.num}
                     </span>
                     <span
-                      className={`group-hover:text-accent-deep flex-1 font-serif text-[21px] leading-tight font-normal transition-colors duration-300 sm:text-[26px] ${
+                      className={`group-hover:text-accent-deep font-display flex-1 text-[21px] leading-tight font-normal transition-colors duration-300 sm:text-[26px] ${
                         isOpen ? 'text-accent-deep' : ''
                       }`}
                     >

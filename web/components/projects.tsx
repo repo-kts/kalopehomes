@@ -94,7 +94,7 @@ export function Projects() {
               Our work
             </span>
           </div>
-          <h2 className="kh-fade-up font-serif text-[clamp(2.25rem,5vw,4rem)] font-normal">
+          <h2 className="kh-fade-up font-display text-[clamp(2.25rem,5vw,4rem)] font-normal">
             Selected projects
           </h2>
         </div>
@@ -166,10 +166,10 @@ export function Projects() {
                     style={delay(base + 0.24)}
                   >
                     <div>
-                      <h3 className="font-serif text-[20px] sm:text-[21px]">{project.name}</h3>
+                      <h3 className="font-display text-[20px] sm:text-[21px]">{project.name}</h3>
                       <p className="text-muted-light mt-1 text-[13px]">{project.meta}</p>
                     </div>
-                    <span className="text-accent font-serif text-[15px]">{project.num}</span>
+                    <span className="text-accent font-display text-[15px]">{project.num}</span>
                   </div>
                 </article>
               );

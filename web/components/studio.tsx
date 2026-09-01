@@ -25,7 +25,7 @@ export function Studio() {
 
         <div>
           <h2
-            className="kh-fade-up mb-6 font-serif text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.08] font-normal"
+            className="kh-fade-up font-display mb-6 text-[clamp(2rem,4.5vw,3.5rem)] leading-[1.08] font-normal"
             style={delay(0.2)}
           >
             {studio.heading}
@@ -44,7 +44,7 @@ export function Studio() {
           <div className="kh-fade-up flex flex-wrap gap-10 sm:gap-12" style={delay(0.65)}>
             {studio.stats.map((stat) => (
               <div key={stat.label}>
-                <div className="text-accent-deep font-serif text-4xl">{stat.value}</div>
+                <div className="text-accent-deep font-display text-4xl">{stat.value}</div>
                 <div className="text-muted mt-1 text-[13px] tracking-[0.12em] uppercase">
                   {stat.label}
                 </div>

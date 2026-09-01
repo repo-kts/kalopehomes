@@ -16,7 +16,7 @@ export function SiteFooter({ showCta = true }: { showCta?: boolean } = {}) {
     <footer className="bg-ink text-muted-light">
       <div className="grid grid-cols-2 gap-x-6 gap-y-9 px-6 py-12 sm:px-10 md:px-12 lg:grid-cols-[1.3fr_1fr_1fr_1.1fr] lg:gap-10">
         <div className="col-span-2 lg:col-span-1">
-          <span className="text-paper font-serif text-xl tracking-[0.06em] uppercase">
+          <span className="text-paper font-display text-xl tracking-[0.06em] uppercase">
             {site.name}
           </span>
           <p className="text-accent mt-3 text-[13px] tracking-[0.14em] uppercase">{site.tagline}</p>
@@ -58,7 +58,7 @@ export function SiteFooter({ showCta = true }: { showCta?: boolean } = {}) {
           <h2 className="text-muted-dim mb-3.5 text-[12px] tracking-[0.2em] uppercase">Contact</h2>
           <a
             href={`tel:${consultation.phone.replace(/\s/g, '')}`}
-            className="text-paper hover:text-accent block font-serif text-xl transition-colors duration-300"
+            className="text-paper hover:text-accent font-display block text-xl transition-colors duration-300"
           >
             {consultation.phone}
           </a>
