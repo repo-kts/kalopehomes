@@ -55,7 +55,9 @@ export function SiteHeader({ animate = true }: { animate?: boolean } = {}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showAllDesigns, setShowAllDesigns] = useState(false);
-  const [designOpen, setDesignOpen] = useState(false);
+  // Which row's Design panel is open ('header' | 'bar' | null). A boolean
+  // here opens both copies of the row at once.
+  const [designIn, setDesignIn] = useState<string | null>(null);
   const [mobileDesignOpen, setMobileDesignOpen] = useState(false);
 
   // Closing also folds the submenu, so the menu reopens tidy rather than
@@ -91,38 +93,38 @@ export function SiteHeader({ animate = true }: { animate?: boolean } = {}) {
   // moves between the trigger and the panel.
   function handleBlur(event: FocusEvent<HTMLDivElement>) {
     if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-      setDesignOpen(false);
+      setDesignIn(null);
     }
   }
 
   // One horizontal row, rendered by the header itself and by the bar that
   // slides down when the hamburger is pressed, so the two cannot drift apart.
-  const linkRow = (className: string) => (
+  const linkRow = (className: string, scope: string) => (
     <div className={className}>
       {nav.map((link) =>
         link.children ? (
           <div
             key={link.href}
             className="relative"
-            onMouseEnter={() => setDesignOpen(true)}
-            onMouseLeave={() => setDesignOpen(false)}
-            onFocusCapture={() => setDesignOpen(true)}
+            onMouseEnter={() => setDesignIn(scope)}
+            onMouseLeave={() => setDesignIn(null)}
+            onFocusCapture={() => setDesignIn(scope)}
             onBlurCapture={handleBlur}
             onKeyDown={(event) => {
-              if (event.key === 'Escape') setDesignOpen(false);
+              if (event.key === 'Escape') setDesignIn(null);
             }}
           >
             <a
               href={link.href}
-              aria-expanded={designOpen}
+              aria-expanded={designIn === scope}
               aria-haspopup="true"
               className="text-ink hover:text-accent-deep flex items-center gap-2 transition-colors duration-300"
             >
               {link.label}
-              <Chevron open={designOpen} />
+              <Chevron open={designIn === scope} />
             </a>
 
-            {designOpen && (
+            {designIn === scope && (
               // The padding is a hover bridge — without it the menu closes
               // as the pointer crosses the gap below the trigger.
               <div className="kh-menu absolute top-full left-0 z-40 pt-4">
@@ -132,7 +134,7 @@ export function SiteHeader({ animate = true }: { animate?: boolean } = {}) {
                       <li key={child.label}>
                         <a
                           href={child.href}
-                          onClick={() => setDesignOpen(false)}
+                          onClick={() => setDesignIn(null)}
                           className="text-body hover:text-accent-deep block py-1.5 text-[13px] tracking-normal normal-case transition-colors duration-200"
                         >
                           {child.label}
@@ -142,7 +144,7 @@ export function SiteHeader({ animate = true }: { animate?: boolean } = {}) {
                   </ul>
                   <a
                     href={link.href}
-                    onClick={() => setDesignOpen(false)}
+                    onClick={() => setDesignIn(null)}
                     className="border-rule text-accent-deep hover:text-ink mt-5 block border-t pt-4 text-[11.5px] tracking-[0.16em] uppercase transition-colors duration-200"
                   >
                     View selected projects →
@@ -184,7 +186,10 @@ export function SiteHeader({ animate = true }: { animate?: boolean } = {}) {
           <Logo />
         </Link>
 
-        {linkRow('hidden items-center gap-6 text-[12px] tracking-[0.16em] uppercase xl:flex')}
+        {linkRow(
+          'hidden items-center gap-6 text-[12px] tracking-[0.16em] uppercase xl:flex',
+          'header',
+        )}
 
         <button
           type="button"
@@ -311,7 +316,7 @@ export function SiteHeader({ animate = true }: { animate?: boolean } = {}) {
       >
         <div className="flex items-center justify-end px-6 py-4 sm:px-10 md:px-12">
           <div className="flex items-center gap-6">
-            {linkRow('flex items-center gap-6 text-[12px] tracking-[0.16em] uppercase')}
+            {linkRow('flex items-center gap-6 text-[12px] tracking-[0.16em] uppercase', 'bar')}
             <button
               type="button"
               onClick={closeMenu}
