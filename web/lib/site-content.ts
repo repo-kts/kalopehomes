@@ -6,28 +6,19 @@
  * Kalope photograph (drop the file in `public/` and use `/name.jpg`).
  */
 
+import { designCategories as designPages } from './design-categories';
+
 export type NavLink = { label: string; href: string; children?: NavLink[] };
 
 /**
- * Design-idea categories shown in the header dropdown.
- *
- * They all point at the Best selling section for now — there are no
- * per-category pages yet. Give each one a real `href` once those exist.
+ * Design-idea categories in the header dropdown. Derived from the pages
+ * themselves, so adding a category in `design-categories.ts` puts it in the
+ * menu automatically and the two can never disagree.
  */
-export const designCategories: NavLink[] = [
-  { label: 'Modular kitchen designs', href: '/#best-selling' },
-  { label: 'Wardrobe designs', href: '/#best-selling' },
-  { label: 'Living room designs', href: '/#best-selling' },
-  { label: 'Master bedroom designs', href: '/#best-selling' },
-  { label: 'Bathroom designs', href: '/#best-selling' },
-  { label: 'TV unit designs', href: '/#best-selling' },
-  { label: 'False ceiling designs', href: '/#best-selling' },
-  { label: 'Pooja room designs', href: '/#best-selling' },
-  { label: 'Dining room designs', href: '/#best-selling' },
-  { label: 'Kids bedroom designs', href: '/#best-selling' },
-  { label: 'Home office designs', href: '/#best-selling' },
-  { label: 'Office cabin designs', href: '/#best-selling' },
-];
+export const designCategories: NavLink[] = designPages.map((category) => ({
+  label: category.label,
+  href: `/design/${category.slug}`,
+}));
 
 export const nav: NavLink[] = [
   { label: 'Design', href: '/#projects', children: designCategories },
