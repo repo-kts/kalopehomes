@@ -151,12 +151,41 @@ function FieldRenderer({
       )}
 
       {field.type === 'tags' && (
-        <Textarea
-          id={field.name}
-          value={tagsToText(value)}
-          placeholder="One value per line"
-          onChange={(e) => onChange(textToTags(e.target.value))}
-        />
+        field.name === 'images' ? (
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+            <Textarea
+              id={field.name}
+              value={tagsToText(value)}
+              placeholder="One value per line"
+              onChange={(e) => onChange(textToTags(e.target.value))}
+            />
+            <div className="grid min-h-28 grid-cols-2 gap-2 rounded-md border bg-muted/20 p-2">
+              {(Array.isArray(value) ? (value as string[]) : []).map((url, index) => (
+                <img
+                  key={`${url}-${index}`}
+                  src={url}
+                  alt={`Image preview ${index + 1}`}
+                  className="aspect-square w-full rounded object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              ))}
+              {(!Array.isArray(value) || value.length === 0) && (
+                <span className="col-span-2 self-center text-center text-xs text-muted-foreground">
+                  Preview appears here
+                </span>
+              )}
+            </div>
+          </div>
+        ) : (
+          <Textarea
+            id={field.name}
+            value={tagsToText(value)}
+            placeholder="One value per line"
+            onChange={(e) => onChange(textToTags(e.target.value))}
+          />
+        )
       )}
 
       {field.type === 'checkbox' && (
