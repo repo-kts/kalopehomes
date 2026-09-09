@@ -7,40 +7,59 @@ import type { SectionTotals } from '@/types/quotation';
 import { COLUMNS } from './columns';
 import type { FlowPart } from './Paginator';
 
+/**
+ * Every part is a <tbody> rather than a bare <tr>: an item and its note are two
+ * rows that must never be parted by a page break, and a tbody is the only
+ * grouping a table allows. A table may hold any number of them.
+ */
 function DataRow({ item }: { item: SectionTotals['section']['items'][number] }) {
   const amount = lineAmount(item);
+  const note = item.note?.trim();
   return (
-    <tr data-flow-part={item.id}>
-      <td>{item.category}</td>
-      <td>{item.description}</td>
-      <td>{item.unit}</td>
-      <td>{item.quantity ? formatPlain(toNumber(item.quantity)) : ''}</td>
-      <td>{item.rate ? formatPlain(toNumber(item.rate)) : ''}</td>
-      <td>{amount > 0 ? formatPlain(amount) : ''}</td>
-    </tr>
+    <tbody data-flow-part={item.id}>
+      <tr>
+        <td>{item.category}</td>
+        <td>{item.description}</td>
+        <td>{item.unit}</td>
+        <td>{item.quantity ? formatPlain(toNumber(item.quantity)) : ''}</td>
+        <td>{item.rate ? formatPlain(toNumber(item.rate)) : ''}</td>
+        <td>{amount > 0 ? formatPlain(amount) : ''}</td>
+      </tr>
+      {note && (
+        <tr>
+          <td className="items-table__note" colSpan={COLUMNS.length}>
+            Note: {note}
+          </td>
+        </tr>
+      )}
+    </tbody>
   );
 }
 
 function BlankRow({ id }: { id: string }) {
   return (
-    <tr data-flow-part={id}>
-      {COLUMNS.map((column) => (
-        <td key={column}>&nbsp;</td>
-      ))}
-    </tr>
+    <tbody data-flow-part={id}>
+      <tr>
+        {COLUMNS.map((column) => (
+          <td key={column}>&nbsp;</td>
+        ))}
+      </tr>
+    </tbody>
   );
 }
 
 function GrandTotalRow({ id, total }: { id: string; total: number }) {
   return (
-    <tr data-flow-part={id} className="items-table__total">
-      <td />
-      <td />
-      <td />
-      <td />
-      <td className="is-label">Grand Total</td>
-      <td className="is-label">{formatPlain(total)}</td>
-    </tr>
+    <tbody data-flow-part={id}>
+      <tr className="items-table__total">
+        <td />
+        <td />
+        <td />
+        <td />
+        <td className="is-label">Grand Total</td>
+        <td className="is-label">{formatPlain(total)}</td>
+      </tr>
+    </tbody>
   );
 }
 

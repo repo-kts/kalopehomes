@@ -288,6 +288,14 @@ body {
   overflow-x: auto;
 }
 
+/* A row and its optional note, stacked. */
+.rows__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 640px;
+}
+
 .rows__head,
 .rows__row {
   display: grid;
@@ -319,6 +327,39 @@ body {
   display: flex;
   justify-content: flex-end;
   gap: 2px;
+}
+
+/*
+ * The note sits under its row, indented past the Category column so it reads as
+ * belonging to the row above rather than as a row of its own.
+ */
+.rows__note {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding-left: 18px;
+}
+
+.rows__note > .input {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+}
+
+.rows__note-add {
+  align-self: flex-start;
+  margin-left: 18px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.rows__note-add:hover {
+  color: var(--teal-dark);
 }
 
 /* --------------------------------------------------------------------------

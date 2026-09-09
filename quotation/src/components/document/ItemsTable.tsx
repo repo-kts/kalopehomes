@@ -3,6 +3,7 @@ import { COL_WIDTHS, COLUMNS } from './columns';
 
 export interface SectionTableProps {
   title: string;
+  /** One <tbody> per item — see `sectionRowParts`. */
   rows: ReactNode[];
   /** False on continuation pages, where the heading gains "(contd.)". */
   isFirst: boolean;
@@ -25,7 +26,7 @@ export function SectionTable({ title, rows, isFirst }: SectionTableProps) {
             ))}
           </tr>
         </thead>
-        <tbody>{rows}</tbody>
+        {rows}
       </table>
     </div>
   );

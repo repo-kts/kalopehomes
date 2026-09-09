@@ -15,6 +15,20 @@ export interface SectionEditorProps {
 export function SectionEditor({ entry, index, canRemove, actions }: SectionEditorProps) {
   const { section } = entry;
   const [pickerOpen, setPickerOpen] = useState(false);
+  /*
+   * Rows whose note field is open but still empty. A row with text in its note
+   * shows the field regardless, so this only has to remember the empty ones.
+   */
+  const [openNotes, setOpenNotes] = useState<ReadonlySet<string>>(new Set());
+
+  const setNoteOpen = (itemId: string, open: boolean) => {
+    setOpenNotes((current) => {
+      const next = new Set(current);
+      if (open) next.add(itemId);
+      else next.delete(itemId);
+      return next;
+    });
+  };
 
   return (
     <section className="card">
@@ -49,88 +63,123 @@ export function SectionEditor({ entry, index, canRemove, actions }: SectionEdito
         </div>
 
         {section.items.map((item, itemIndex) => (
-          <div className="rows__row" key={item.id}>
-            <input
-              className="input"
-              value={item.category}
-              aria-label="Category"
-              placeholder="Modular Kitchen"
-              onChange={(event) =>
-                actions.updateItem(section.id, item.id, { category: event.target.value })
-              }
-            />
-            <input
-              className="input"
-              value={item.description}
-              aria-label="Description"
-              placeholder="L-Shape Cabinet"
-              onChange={(event) =>
-                actions.updateItem(section.id, item.id, { description: event.target.value })
-              }
-            />
-            <select
-              className="input"
-              value={item.unit}
-              aria-label="Unit"
-              onChange={(event) =>
-                actions.updateItem(section.id, item.id, { unit: event.target.value as Unit })
-              }
-            >
-              {UNITS.map((unit) => (
-                <option key={unit} value={unit}>
-                  {unit}
-                </option>
-              ))}
-            </select>
-            <input
-              className="input input--num"
-              value={item.quantity}
-              aria-label="Quantity"
-              inputMode="decimal"
-              placeholder="0"
-              onChange={(event) =>
-                actions.updateItem(section.id, item.id, { quantity: event.target.value })
-              }
-            />
-            <input
-              className="input input--num"
-              value={item.rate}
-              aria-label="Rate"
-              inputMode="decimal"
-              placeholder="0"
-              onChange={(event) =>
-                actions.updateItem(section.id, item.id, { rate: event.target.value })
-              }
-            />
-            <output className="rows__amount">{formatCurrency(lineAmount(item))}</output>
-            <div className="rows__tools">
-              <button
-                type="button"
-                className="icon-btn"
-                title="Move up"
-                disabled={itemIndex === 0}
-                onClick={() => actions.moveItem(section.id, item.id, -1)}
+          <div className="rows__item" key={item.id}>
+            <div className="rows__row">
+              <input
+                className="input"
+                value={item.category}
+                aria-label="Category"
+                placeholder="Modular Kitchen"
+                onChange={(event) =>
+                  actions.updateItem(section.id, item.id, { category: event.target.value })
+                }
+              />
+              <input
+                className="input"
+                value={item.description}
+                aria-label="Description"
+                placeholder="L-Shape Cabinet"
+                onChange={(event) =>
+                  actions.updateItem(section.id, item.id, { description: event.target.value })
+                }
+              />
+              <select
+                className="input"
+                value={item.unit}
+                aria-label="Unit"
+                onChange={(event) =>
+                  actions.updateItem(section.id, item.id, { unit: event.target.value as Unit })
+                }
               >
-                ↑
-              </button>
-              <button
-                type="button"
-                className="icon-btn"
-                title="Move down"
-                disabled={itemIndex === section.items.length - 1}
-                onClick={() => actions.moveItem(section.id, item.id, 1)}
-              >
-                ↓
-              </button>
-              <button
-                type="button"
-                className="icon-btn icon-btn--danger"
-                title="Delete row"
-                onClick={() => actions.removeItem(section.id, item.id)}
-              >
-                ✕
-              </button>
+                {UNITS.map((unit) => (
+                  <option key={unit} value={unit}>
+                    {unit}
+                  </option>
+                ))}
+              </select>
+              <input
+                className="input input--num"
+                value={item.quantity}
+                aria-label="Quantity"
+                inputMode="decimal"
+                placeholder="0"
+                onChange={(event) =>
+                  actions.updateItem(section.id, item.id, { quantity: event.target.value })
+                }
+              />
+              <input
+                className="input input--num"
+                value={item.rate}
+                aria-label="Rate"
+                inputMode="decimal"
+                placeholder="0"
+                onChange={(event) =>
+                  actions.updateItem(section.id, item.id, { rate: event.target.value })
+                }
+              />
+              <output className="rows__amount">{formatCurrency(lineAmount(item))}</output>
+              <div className="rows__tools">
+                <button
+                  type="button"
+                  className="icon-btn"
+                  title="Move up"
+                  disabled={itemIndex === 0}
+                  onClick={() => actions.moveItem(section.id, item.id, -1)}
+                >
+                  ↑
+                </button>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  title="Move down"
+                  disabled={itemIndex === section.items.length - 1}
+                  onClick={() => actions.moveItem(section.id, item.id, 1)}
+                >
+                  ↓
+                </button>
+                <button
+                  type="button"
+                  className="icon-btn icon-btn--danger"
+                  title="Delete row"
+                  onClick={() => actions.removeItem(section.id, item.id)}
+                >
+                  ✕
+                </button>
+              </div>
             </div>
+
+            {openNotes.has(item.id) || item.note ? (
+              <div className="rows__note">
+                <input
+                  className="input"
+                  value={item.note ?? ''}
+                  aria-label="Note"
+                  placeholder="Note printed under this row, e.g. soft-close hinges included"
+                  onChange={(event) =>
+                    actions.updateItem(section.id, item.id, { note: event.target.value })
+                  }
+                />
+                <button
+                  type="button"
+                  className="icon-btn icon-btn--danger"
+                  title="Remove note"
+                  onClick={() => {
+                    actions.updateItem(section.id, item.id, { note: '' });
+                    setNoteOpen(item.id, false);
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="rows__note-add"
+                onClick={() => setNoteOpen(item.id, true)}
+              >
+                + Add note
+              </button>
+            )}
           </div>
         ))}
       </div>

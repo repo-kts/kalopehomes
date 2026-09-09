@@ -29,6 +29,7 @@ export function createLineItem(partial: Partial<LineItem> = {}): LineItem {
     unit: AREA_UNIT,
     quantity: '',
     rate: '',
+    note: '',
     ...partial,
   };
 }

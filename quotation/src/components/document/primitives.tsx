@@ -27,23 +27,34 @@ export function DocNote({ text }: { text: string }) {
   return <p className="doc-note">{richText(text)}</p>;
 }
 
-/** The "➔" list used for "Why Kalope Homes" on page one. */
-export function ArrowList({ items }: { items: string[] }) {
+/** "●" throughout; "➔" for "Why Kalope Homes" on page one. */
+export type ListMarker = 'bullet' | 'arrow';
+
+/**
+ * The <ul> shell. It takes rendered entries rather than the strings, because
+ * the paginator hands it one page's worth at a time — see `headedList` in
+ * `QuotationDocument`.
+ */
+export function DocList({
+  marker = 'bullet',
+  spaced = false,
+  children,
+}: {
+  marker?: ListMarker;
+  spaced?: boolean;
+  children: ReactNode;
+}) {
   return (
-    <ul className="doc-list doc-list--arrow">
-      {items.map((item) => (
-        <li key={item}>{richText(item)}</li>
-      ))}
+    <ul className={`doc-list doc-list--${marker}${spaced ? ' doc-list--spaced' : ''}`}>
+      {children}
     </ul>
   );
 }
 
-export function BulletList({ items, spaced = false }: { items: string[]; spaced?: boolean }) {
-  return (
-    <ul className={`doc-list doc-list--bullet${spaced ? ' doc-list--spaced' : ''}`}>
-      {items.map((item) => (
-        <li key={item}>{richText(item)}</li>
-      ))}
-    </ul>
-  );
+/**
+ * One entry. `data-flow-part` is what lets the paginator measure entries singly
+ * and break the list between them.
+ */
+export function DocListItem({ id, text }: { id: string; text: string }) {
+  return <li data-flow-part={id}>{richText(text)}</li>;
 }
