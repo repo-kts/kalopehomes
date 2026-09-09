@@ -66,12 +66,36 @@ async function seedTaxonomies() {
 
 async function seedCategories() {
   const categories = [
-    { name: 'Modular Kitchen', slug: 'modular-kitchen' },
-    { name: 'Wardrobes', slug: 'wardrobes' },
-    { name: 'Full Home Interiors', slug: 'full-home-interiors' },
-    { name: 'Living Room', slug: 'living-room' },
-    { name: 'Bedroom', slug: 'bedroom' },
-    { name: 'Renovation', slug: 'renovation' },
+    {
+      name: 'Modular Kitchen',
+      slug: 'modular-kitchen',
+      imageUrl: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d',
+    },
+    {
+      name: 'Wardrobes',
+      slug: 'wardrobes',
+      imageUrl: 'https://images.unsplash.com/photo-1558997519-83ea9252edf8',
+    },
+    {
+      name: 'Full Home Interiors',
+      slug: 'full-home-interiors',
+      imageUrl: 'https://images.unsplash.com/photo-1600210491892-03d54c0aaf87',
+    },
+    {
+      name: 'Living Room',
+      slug: 'living-room',
+      imageUrl: 'https://images.unsplash.com/photo-1564078516393-cf04bd966897',
+    },
+    {
+      name: 'Bedroom',
+      slug: 'bedroom',
+      imageUrl: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461',
+    },
+    {
+      name: 'Renovation',
+      slug: 'renovation',
+      imageUrl: 'https://images.unsplash.com/photo-1484101403633-562f891dc89a',
+    },
   ];
   for (const [i, c] of categories.entries()) {
     await prisma.category.upsert({
@@ -79,47 +103,87 @@ async function seedCategories() {
       create: { ...c, status: 'PUBLISHED', isFeatured: i < 3, sortOrder: i },
       update: {},
     });
+    await prisma.category.updateMany({
+      where: { slug: c.slug, imageUrl: null },
+      data: { imageUrl: c.imageUrl },
+    });
   }
   console.log(`✔ Seeded ${categories.length} categories`);
 }
 
-async function seedSampleProduct() {
-  const kitchen = await prisma.category.findUnique({ where: { slug: 'modular-kitchen' } });
-  const kitchenRoom = await prisma.room.findUnique({ where: { slug: 'kitchen' } });
-  const modern = await prisma.style.findUnique({ where: { slug: 'modern' } });
-  if (!kitchen) return;
+async function seedProducts() {
+  const categories = await prisma.category.findMany({
+    where: { slug: { in: ['modular-kitchen', 'wardrobes', 'living-room', 'bedroom'] } },
+  });
+  const categoryBySlug = new Map(categories.map((category) => [category.slug, category]));
 
-  const existing = await prisma.product.findUnique({ where: { slug: 'l-shaped-modern-kitchen' } });
-  if (existing) return;
-
-  await prisma.product.create({
-    data: {
+  const products = [
+    {
       name: 'L-Shaped Modern Kitchen',
       slug: 'l-shaped-modern-kitchen',
-      shortDescription: 'A sleek L-shaped modular kitchen with soft-close cabinetry.',
-      description:
-        'Space-efficient L-shaped layout featuring a matte-finish acrylic shutter, quartz countertop and integrated appliance provisions.',
+      categorySlug: 'modular-kitchen',
+      shortDescription: 'Soft-close cabinetry, engineered stone counters and appliance integration.',
+      description: 'A space-efficient kitchen designed around the way you cook and built to your plan.',
       startingPrice: 185000,
-      priceUnit: 'onwards',
-      status: 'PUBLISHED',
-      isFeatured: true,
-      categoryId: kitchen.id,
       specs: { layout: 'L-shaped', finish: 'Acrylic matte', countertop: 'Quartz' },
-      images: {
-        create: [
-          {
-            url: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d',
-            alt: 'L-shaped modern kitchen',
-            isPrimary: true,
-            sortOrder: 0,
-          },
-        ],
-      },
-      ...(kitchenRoom ? { rooms: { create: [{ roomId: kitchenRoom.id }] } } : {}),
-      ...(modern ? { styles: { create: [{ styleId: modern.id }] } } : {}),
+      imageUrl: 'https://images.unsplash.com/photo-1556909212-d5b604d0c90d',
+      imageAlt: 'A modular kitchen with pale cabinetry and stone counters',
+      isFeatured: true,
     },
-  });
-  console.log('✔ Seeded sample product');
+    {
+      name: 'Wardrobes & Storage',
+      slug: 'wardrobes-and-storage',
+      categorySlug: 'wardrobes',
+      shortDescription: 'Floor-to-ceiling wardrobes, walk-ins and loft storage for every millimetre.',
+      description: 'Storage configured around what you own, with fitted interiors and soft-close hardware.',
+      startingPrice: 95000,
+      specs: { type: 'Floor-to-ceiling', hardware: 'Soft-close', storage: 'Loft included' },
+      imageUrl: 'https://images.unsplash.com/photo-1558997519-83ea9252edf8',
+      imageAlt: 'A fitted wardrobe with open shelving',
+    },
+    {
+      name: 'TV & Media Units',
+      slug: 'tv-and-media-units',
+      categorySlug: 'living-room',
+      shortDescription: 'Wall-length media walls with concealed cables, lighting and display niches.',
+      description: 'A considered media wall that gives the living room storage without visual clutter.',
+      startingPrice: 75000,
+      specs: { cableManagement: 'Concealed', lighting: 'Integrated', storage: 'Closed and open niches' },
+      imageUrl: 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c',
+      imageAlt: 'A living room with a built-in media wall',
+    },
+    {
+      name: 'Bedroom Sets',
+      slug: 'bedroom-sets',
+      categorySlug: 'bedroom',
+      shortDescription: 'Beds, side tables, headboard panelling and reading light designed as one piece.',
+      description: 'A quieter bedroom scheme with coordinated joinery, storage and warm layered lighting.',
+      startingPrice: 120000,
+      specs: { included: 'Bed, side tables, headboard', lighting: 'Integrated reading lights' },
+      imageUrl: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+      imageAlt: 'A bedroom with panelled headboard and side tables',
+    },
+  ];
+
+  for (const [sortOrder, product] of products.entries()) {
+    const category = categoryBySlug.get(product.categorySlug);
+    if (!category) continue;
+
+    const { categorySlug: _categorySlug, imageUrl, imageAlt, ...data } = product;
+    await prisma.product.upsert({
+      where: { slug: product.slug },
+      create: {
+        ...data,
+        categoryId: category.id,
+        priceUnit: 'onwards',
+        status: 'PUBLISHED',
+        sortOrder,
+        images: { create: [{ url: imageUrl, alt: imageAlt, isPrimary: true }] },
+      },
+      update: {},
+    });
+  }
+  console.log(`✔ Seeded ${products.length} catalog products`);
 }
 
 async function seedCms() {
@@ -191,7 +255,7 @@ async function main() {
   await seedAdmin();
   await seedTaxonomies();
   await seedCategories();
-  await seedSampleProduct();
+  await seedProducts();
   await seedCms();
   console.log('✅ Seed complete');
 }
