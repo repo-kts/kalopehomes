@@ -9,13 +9,14 @@ import { LetterheadContact } from './LetterheadContact';
 import { sectionRowParts } from './SectionRows';
 import { PaginatedDocument, type FlowBlock } from './Paginator';
 import {
-  ArrowList,
-  BulletList,
   DocHeading,
+  DocList,
+  DocListItem,
   DocNote,
   DocParagraph,
   DocSubHeading,
   DocTitle,
+  type ListMarker,
 } from './primitives';
 
 /**
@@ -33,7 +34,7 @@ const GAP = {
   totals: 5.1,
 } as const;
 
-/** A heading plus its list, kept together so a heading never ends a page alone. */
+/** A heading plus a body that cannot be broken up — moves whole, heading and all. */
 function headed(id: string, heading: string, body: ReactNode): FlowBlock {
   return {
     kind: 'atom',
@@ -44,6 +45,54 @@ function headed(id: string, heading: string, body: ReactNode): FlowBlock {
         {body}
       </>
     ),
+  };
+}
+
+interface HeadedListOptions {
+  heading?: string;
+  subHeading?: string;
+  marker?: ListMarker;
+  spaced?: boolean;
+  gap?: number;
+}
+
+/**
+ * A heading and its list, as a block the paginator may break between entries.
+ *
+ * Two guarantees fall out of the `split` packing rule, which refuses to place
+ * the chrome without at least one entry under it:
+ *  - a heading is never left at the foot of a page on its own — when the space
+ *    left cannot hold the heading *and* an entry, the break falls above the
+ *    heading and the two travel to the next page together;
+ *  - a list too long for one page continues on the next instead of being
+ *    clipped, repeating its heading as "… (contd.)" like the item tables.
+ */
+function headedList(id: string, items: string[], options: HeadedListOptions = {}): FlowBlock {
+  const { heading, subHeading, marker, spaced, gap } = options;
+
+  return {
+    kind: 'split',
+    id,
+    gap,
+    parts: items.map((item, index) => {
+      const partId = `${id}-${index}`;
+      return { id: partId, node: <DocListItem key={partId} id={partId} text={item} /> };
+    }),
+    render: (entries, meta) => {
+      // "(contd.)" goes on the most specific label the block prints.
+      const contd = (label: string) => (meta.isFirst ? label : `${label} (contd.)`);
+      return (
+        <>
+          {heading !== undefined && (
+            <DocHeading>{subHeading ? heading : contd(heading)}</DocHeading>
+          )}
+          {subHeading !== undefined && <DocSubHeading>{contd(subHeading)}</DocSubHeading>}
+          <DocList marker={marker} spaced={spaced}>
+            {entries}
+          </DocList>
+        </>
+      );
+    },
   };
 }
 
@@ -64,38 +113,23 @@ function buildBlocks(quotation: Quotation): FlowBlock[] {
       gap: GAP.intro,
       node: <DocParagraph text={doc.INTRO_PARAGRAPH} />,
     },
-    headed('why', 'Why Kalope Homes', <ArrowList items={doc.WHY_KALOPE_HOMES} />),
-    headed(
-      'materials',
-      'Material Specifications',
-      <BulletList items={doc.MATERIAL_SPECIFICATIONS} spaced />,
-    ),
+    headedList('why', doc.WHY_KALOPE_HOMES, { heading: 'Why Kalope Homes', marker: 'arrow' }),
+    headedList('materials', doc.MATERIAL_SPECIFICATIONS, {
+      heading: 'Material Specifications',
+      spaced: true,
+    }),
 
     // Page one ends here on the approved document; keep that break deliberate.
     { kind: 'break', id: 'break-cover' },
 
-    {
-      kind: 'atom',
-      id: 'scope',
-      node: (
-        <>
-          <DocHeading>Scope of Work</DocHeading>
-          <DocSubHeading>Work Included</DocSubHeading>
-          <BulletList items={doc.WORK_INCLUDED} />
-        </>
-      ),
-    },
-    {
-      kind: 'atom',
-      id: 'scope-excluded',
+    headedList('scope', doc.WORK_INCLUDED, {
+      heading: 'Scope of Work',
+      subHeading: 'Work Included',
+    }),
+    headedList('scope-excluded', doc.WORK_NOT_INCLUDED, {
+      subHeading: 'Work Not Included',
       gap: GAP.subsection,
-      node: (
-        <>
-          <DocSubHeading>Work Not Included</DocSubHeading>
-          <BulletList items={doc.WORK_NOT_INCLUDED} />
-        </>
-      ),
-    },
+    }),
     {
       kind: 'atom',
       id: 'exclusions-note',
@@ -137,16 +171,14 @@ function buildBlocks(quotation: Quotation): FlowBlock[] {
       ),
     },
     headed('cost-breakup', 'COST BREAKUP', <CostBreakup rows={doc.COST_BREAKUP} />),
-    headed('payment', 'Payment Terms', <BulletList items={doc.PAYMENT_TERMS} />),
-    headed('timeline', 'Project Timeline', <BulletList items={doc.PROJECT_TIMELINE} />),
-    // The approved document opens its terms half on a fresh page; keep that.
-    { kind: 'break', id: 'break-terms' },
-    headed('warranty', 'Warranty', <BulletList items={doc.WARRANTY} />),
-    headed('care', 'Material Care & Maintenance', <BulletList items={doc.MATERIAL_CARE} />),
-    headed('site', 'Site Requirements', <BulletList items={doc.SITE_REQUIREMENTS} />),
-    headed('changes', 'Design Changes / Variations', <BulletList items={doc.DESIGN_CHANGES} />),
-    headed('transport', 'Transportation & Handling', <BulletList items={doc.TRANSPORTATION} />),
-    headed('terms', 'Terms & Conditions', <BulletList items={doc.TERMS_AND_CONDITIONS} />),
+    headedList('payment', doc.PAYMENT_TERMS, { heading: 'Payment Terms' }),
+    headedList('timeline', doc.PROJECT_TIMELINE, { heading: 'Project Timeline' }),
+    headedList('warranty', doc.WARRANTY, { heading: 'Warranty' }),
+    headedList('care', doc.MATERIAL_CARE, { heading: 'Material Care & Maintenance' }),
+    headedList('site', doc.SITE_REQUIREMENTS, { heading: 'Site Requirements' }),
+    headedList('changes', doc.DESIGN_CHANGES, { heading: 'Design Changes / Variations' }),
+    headedList('transport', doc.TRANSPORTATION, { heading: 'Transportation & Handling' }),
+    headedList('terms', doc.TERMS_AND_CONDITIONS, { heading: 'Terms & Conditions' }),
     headed('approval', 'Client Approval', <ClientApproval fields={doc.CLIENT_APPROVAL_FIELDS} />),
   );
 

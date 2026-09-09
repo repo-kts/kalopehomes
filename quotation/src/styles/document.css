@@ -240,6 +240,17 @@
   font-weight: 700;
 }
 
+/* Per-item note: a full-width row under its item, set apart from the priced
+ * columns by being left-aligned and italic rather than by any extra rule. The
+ * element is named in the selector to outweigh the centring on `.items-table td`. */
+td.items-table__note {
+  text-align: left;
+  padding-left: 2.4mm;
+  font-size: 8pt;
+  font-style: italic;
+  line-height: 1.3;
+}
+
 /* ---------------------------------------------------------------------------
  * Totals, cost breakup, approval
  * ------------------------------------------------------------------------ */

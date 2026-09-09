@@ -40,6 +40,12 @@ export interface LineItem {
   /** Kept as strings so a half-typed "1." doesn't fight the input. */
   quantity: string;
   rate: string;
+  /**
+   * Optional remark, printed in a full-width row directly under the item.
+   * Drafts saved before notes existed have no `note`, so read it defensively
+   * rather than bumping `QUOTATION_VERSION` and discarding them.
+   */
+  note?: string;
 }
 
 export interface QuoteSection {
