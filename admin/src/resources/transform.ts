@@ -75,7 +75,7 @@ export function serialize(config: ResourceConfig, values: Rec, isEdit: boolean):
         break;
       case 'tags': {
         const arr = Array.isArray(value) ? (value as string[]) : [];
-        // The product image gallery expects objects.
+        // Product images use objects; standalone gallery URLs stay strings.
         payload[field.name] =
           field.name === 'images' ? arr.map((url) => ({ url })) : arr;
         break;

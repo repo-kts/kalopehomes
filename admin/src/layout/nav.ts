@@ -29,6 +29,7 @@ export const NAV: NavGroup[] = [
     items: [
       { label: 'Hero Slides', to: '/hero-slides', icon: 'Images', permission: 'content:read' },
       { label: 'Projects', to: '/projects', icon: 'Building2', permission: 'content:read' },
+      { label: 'Gallery', to: '/gallery', icon: 'Images', permission: 'content:read' },
       { label: 'Testimonials', to: '/testimonials', icon: 'Quote', permission: 'content:read' },
       { label: 'FAQs', to: '/faqs', icon: 'HelpCircle', permission: 'content:read' },
       { label: 'Settings', to: '/settings', icon: 'Settings', permission: 'content:read' },
