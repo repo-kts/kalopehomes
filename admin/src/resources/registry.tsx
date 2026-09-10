@@ -123,6 +123,30 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     ],
   },
 
+  gallery: {
+    key: 'gallery',
+    labelSingular: 'Image',
+    labelPlural: 'Images',
+    icon: 'Images',
+    permission: 'content:read',
+    writePermission: 'content:write',
+    deletePermission: 'content:delete',
+    searchPlaceholder: 'Search gallery…',
+    filters: [{ key: 'status', label: 'Status', options: STATUS_OPTIONS }],
+    columns: [
+      { key: 'title', label: 'Title' },
+      { key: 'status', label: 'Status', render: (r) => statusBadge(r.status) },
+      { key: 'isFeatured', label: 'Featured', render: (r) => boolBadge(r.isFeatured) },
+    ],
+    fields: [
+      { name: 'title', label: 'Title', type: 'text', required: true },
+      { name: 'description', label: 'Description', type: 'textarea' },
+      { name: 'images', label: 'Image URLs (one per line)', type: 'tags' },
+      { name: 'status', label: 'Status', type: 'select', options: STATUS_OPTIONS, defaultValue: 'DRAFT' },
+      { name: 'isFeatured', label: 'Featured', type: 'checkbox' },
+    ],
+  },
+
   rooms: {
     key: 'rooms',
     labelSingular: 'Room',

@@ -27,6 +27,7 @@ export default function App() {
           <Route path="styles" element={<ResourceListPage resourceKey="styles" />} />
           <Route path="hero-slides" element={<ResourceListPage resourceKey="hero-slides" />} />
           <Route path="projects" element={<ResourceListPage resourceKey="projects" />} />
+          <Route path="gallery" element={<ResourceListPage resourceKey="gallery" />} />
           <Route path="testimonials" element={<ResourceListPage resourceKey="testimonials" />} />
           <Route path="faqs" element={<ResourceListPage resourceKey="faqs" />} />
           <Route path="users" element={<ResourceListPage resourceKey="users" />} />
