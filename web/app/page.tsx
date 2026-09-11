@@ -8,6 +8,12 @@ import { Services } from '@/components/services';
 import { SiteFooter } from '@/components/site-footer';
 import { Studio } from '@/components/studio';
 
+/**
+ * The hero is driven by slides published in the admin, so the page prerenders
+ * with what is live and refreshes every five minutes.
+ */
+export const revalidate = 300;
+
 export default function Home() {
   return (
     <>

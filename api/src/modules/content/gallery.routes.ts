@@ -3,12 +3,14 @@ import { z } from 'zod';
 import { crudRouter } from '../../lib/crud';
 import { PERMISSIONS } from '../../lib/permissions';
 import { prisma } from '../../lib/prisma';
-import { contentStatus, urlField } from '../../lib/validators';
+import { contentStatus } from '../../lib/validators';
 
 const base = {
   title: z.string().trim().min(1),
   description: z.string().trim().optional(),
-  imageUrls: z.array(urlField).default([]),
+  // Not `urlField`: that permits '' and undefined, which Prisma rejects for a
+  // String[] column. Every entry here must be a real URL.
+  imageUrls: z.array(z.url()).default([]),
   status: contentStatus.optional(),
   isFeatured: z.boolean().optional(),
 };
