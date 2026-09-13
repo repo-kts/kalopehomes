@@ -21,12 +21,25 @@ import { HttpError } from '../../utils/http-error';
  * a durable object store (S3/R2/Blob) should back `storage` there.
  */
 export const UPLOAD_ROUTE = '/uploads';
-export const UPLOAD_DIR = path.resolve(process.cwd(), 'uploads');
 
-// Ensure the target directory exists at boot so multer never fails on a
-// missing folder.
-if (!existsSync(UPLOAD_DIR)) {
-  mkdirSync(UPLOAD_DIR, { recursive: true });
+// Pick a writable location. On Vercel (and most serverless hosts) the project
+// filesystem is read-only except for `/tmp`, so default there; anywhere else
+// use a repo-local `uploads/` dir. `UPLOAD_DIR` env var overrides both.
+export const UPLOAD_DIR = process.env.UPLOAD_DIR
+  ? path.resolve(process.env.UPLOAD_DIR)
+  : process.env.VERCEL
+    ? '/tmp/uploads'
+    : path.resolve(process.cwd(), 'uploads');
+
+// Best-effort create at boot so multer never fails on a missing folder. Must
+// not throw here: a read-only FS would otherwise crash every invocation.
+try {
+  if (!existsSync(UPLOAD_DIR)) {
+    mkdirSync(UPLOAD_DIR, { recursive: true });
+  }
+} catch {
+  // Directory couldn't be created (e.g. read-only FS). Upload requests will
+  // surface the real error; the app itself still boots.
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
