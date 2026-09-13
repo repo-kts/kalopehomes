@@ -16,6 +16,7 @@ import { quotesRouter } from '../modules/quotes/quotes.routes';
 import { rolesRouter } from '../modules/roles/roles.routes';
 import { roomsRouter } from '../modules/rooms/rooms.routes';
 import { stylesRouter } from '../modules/styles/styles.routes';
+import { uploadsRouter } from '../modules/uploads/uploads.routes';
 import { usersRouter } from '../modules/users/users.routes';
 import { healthRouter } from './health.route';
 
@@ -51,6 +52,7 @@ v1.use('/projects', projectsRouter);
 v1.use('/gallery', galleryRouter);
 v1.use('/faqs', faqsRouter);
 v1.use('/settings', settingsRouter);
+v1.use('/uploads', uploadsRouter);
 v1.use('/leads', leadsRouter);
 v1.use('/quotes', quotesRouter);
 

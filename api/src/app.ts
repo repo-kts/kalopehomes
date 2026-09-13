@@ -7,6 +7,7 @@ import { env } from './config/env';
 import { errorHandler } from './middleware/error-handler';
 import { notFound } from './middleware/not-found';
 import { apiRouter } from './routes';
+import { UPLOAD_DIR, UPLOAD_ROUTE } from './modules/uploads/uploads.routes';
 
 /**
  * Builds and configures the Express application.
@@ -22,6 +23,18 @@ export function createApp(): Express {
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan(env.isProduction ? 'combined' : 'dev'));
+
+  // Uploaded media. Helmet defaults Cross-Origin-Resource-Policy to
+  // `same-origin`, which would stop the admin (a different origin) from
+  // displaying these at all, so it is relaxed for this path only.
+  app.use(
+    UPLOAD_ROUTE,
+    express.static(UPLOAD_DIR, {
+      index: false,
+      maxAge: '1y',
+      setHeaders: (res) => res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin'),
+    }),
+  );
 
   // Routes
   app.use('/', apiRouter);

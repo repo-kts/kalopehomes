@@ -18,6 +18,28 @@ function boolBadge(v: unknown) {
   return v ? <Badge variant="success">Yes</Badge> : <Badge variant="muted">No</Badge>;
 }
 
+/** First image of a list of URLs, as a row thumbnail. Hides itself if the URL is broken. */
+function thumbnail(urls: unknown) {
+  const first = Array.isArray(urls) ? (urls as string[])[0] : undefined;
+  const count = Array.isArray(urls) ? urls.length : 0;
+  if (!first) {
+    return <span className="text-muted-foreground text-xs">No image</span>;
+  }
+  return (
+    <div className="flex items-center gap-2">
+      <img
+        src={first}
+        alt=""
+        className="h-10 w-10 rounded border object-cover"
+        onError={(e) => {
+          e.currentTarget.style.visibility = 'hidden';
+        }}
+      />
+      {count > 1 && <span className="text-muted-foreground text-xs">+{count - 1}</span>}
+    </div>
+  );
+}
+
 export const RESOURCES: Record<string, ResourceConfig> = {
   categories: {
     key: 'categories',
@@ -82,7 +104,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'priceUnit', label: 'Price unit', type: 'text', placeholder: 'onwards / per sq ft' },
       { name: 'roomIds', label: 'Rooms', type: 'relations', optionsResource: 'rooms' },
       { name: 'styleIds', label: 'Styles', type: 'relations', optionsResource: 'styles' },
-      { name: 'images', label: 'Image URLs (one per line)', type: 'tags' },
+      { name: 'images', label: 'Image URLs (one per line)', type: 'tags', preview: true },
       { name: 'specs', label: 'Specs (JSON)', type: 'json' },
       { name: 'status', label: 'Status', type: 'select', options: STATUS_OPTIONS, defaultValue: 'DRAFT' },
       { name: 'isFeatured', label: 'Featured', type: 'checkbox' },
@@ -116,7 +138,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
       { name: 'categoryId', label: 'Category', type: 'relation', optionsResource: 'categories' },
       { name: 'description', label: 'Description', type: 'textarea' },
       { name: 'coverImageUrl', label: 'Cover image URL', type: 'url' },
-      { name: 'images', label: 'Gallery image URLs (one per line)', type: 'tags' },
+      { name: 'images', label: 'Gallery image URLs (one per line)', type: 'tags', preview: true },
       { name: 'status', label: 'Status', type: 'select', options: STATUS_OPTIONS, defaultValue: 'DRAFT' },
       { name: 'isFeatured', label: 'Featured', type: 'checkbox' },
       { name: 'sortOrder', label: 'Sort order', type: 'number', defaultValue: 0 },
@@ -134,6 +156,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     searchPlaceholder: 'Search gallery…',
     filters: [{ key: 'status', label: 'Status', options: STATUS_OPTIONS }],
     columns: [
+      { key: 'imageUrls', label: 'Image', render: (r) => thumbnail(r.imageUrls) },
       { key: 'title', label: 'Title' },
       { key: 'status', label: 'Status', render: (r) => statusBadge(r.status) },
       { key: 'isFeatured', label: 'Featured', render: (r) => boolBadge(r.isFeatured) },
@@ -141,7 +164,7 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     fields: [
       { name: 'title', label: 'Title', type: 'text', required: true },
       { name: 'description', label: 'Description', type: 'textarea' },
-      { name: 'images', label: 'Image URLs (one per line)', type: 'tags' },
+      { name: 'imageUrls', label: 'Image URLs (one per line)', type: 'tags', preview: true },
       { name: 'status', label: 'Status', type: 'select', options: STATUS_OPTIONS, defaultValue: 'DRAFT' },
       { name: 'isFeatured', label: 'Featured', type: 'checkbox' },
     ],

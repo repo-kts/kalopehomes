@@ -5,13 +5,19 @@ import Image from 'next/image';
 import { Reveal } from '@/components/reveal';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
-import { gallery } from '@/lib/site-content';
+import { getGalleryTiles } from '@/lib/gallery';
 import { delay } from '@/lib/motion';
 
 export const metadata: Metadata = {
   title: 'Gallery · Kalope Homes',
   description: 'Rooms, kitchens, wardrobes and workspaces designed and built by Kalope Homes.',
 };
+
+/**
+ * Images are managed in the admin, so the page cannot be frozen at build time.
+ * It prerenders with whatever is published and refreshes every five minutes.
+ */
+export const revalidate = 300;
 
 /** Tile heights, varied so the columns interlock instead of forming rows. */
 const SHAPE = {
@@ -20,7 +26,9 @@ const SHAPE = {
   wide: 'aspect-[4/3]',
 } as const;
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const { tiles } = await getGalleryTiles();
+
   return (
     <>
       <SiteHeader animate={false} />
@@ -52,9 +60,9 @@ export default function GalleryPage() {
             of work rather than a table of it.
           */}
           <Reveal className="columns-2 gap-3 sm:columns-3 sm:gap-4 lg:columns-4">
-            {gallery.map((item, i) => (
+            {tiles.map((item, i) => (
               <figure
-                key={`${item.label}-${i}`}
+                key={`${item.src}-${i}`}
                 className="kh-fade-up group relative mb-3 break-inside-avoid overflow-hidden sm:mb-4"
                 style={delay((i % 8) * 0.06)}
               >
@@ -64,6 +72,11 @@ export default function GalleryPage() {
                     alt={item.alt}
                     fill
                     sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    /* CMS hosts are unknown at build time, so these bypass the
+                       optimizer rather than 400 on an unlisted hostname. Add the
+                       real photo host to `images.remotePatterns` and drop this to
+                       turn optimization back on. */
+                    unoptimized={item.fromCms}
                     className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
                   />
                 </div>

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { ApiError } from '@/lib/api';
+import { ApiError, uploadImages } from '@/lib/api';
 import { cn, formatDate } from '@/lib/utils';
 import { deserialize, serialize, tagsToText, textToTags } from './transform';
 import type { FieldConfig, ResourceConfig } from './types';
@@ -150,34 +150,9 @@ function FieldRenderer({
         />
       )}
 
-      {field.type === 'tags' && (
-        field.name === 'images' ? (
-          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
-            <Textarea
-              id={field.name}
-              value={tagsToText(value)}
-              placeholder="One value per line"
-              onChange={(e) => onChange(textToTags(e.target.value))}
-            />
-            <div className="grid min-h-28 grid-cols-2 gap-2 rounded-md border bg-muted/20 p-2">
-              {(Array.isArray(value) ? (value as string[]) : []).map((url, index) => (
-                <img
-                  key={`${url}-${index}`}
-                  src={url}
-                  alt={`Image preview ${index + 1}`}
-                  className="aspect-square w-full rounded object-cover"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              ))}
-              {(!Array.isArray(value) || value.length === 0) && (
-                <span className="col-span-2 self-center text-center text-xs text-muted-foreground">
-                  Preview appears here
-                </span>
-              )}
-            </div>
-          </div>
+      {field.type === 'tags' &&
+        (field.preview ? (
+          <ImageListField field={field} value={value} onChange={onChange} />
         ) : (
           <Textarea
             id={field.name}
@@ -185,8 +160,7 @@ function FieldRenderer({
             placeholder="One value per line"
             onChange={(e) => onChange(textToTags(e.target.value))}
           />
-        )
-      )}
+        ))}
 
       {field.type === 'checkbox' && (
         <div className="flex h-9 items-center">
@@ -267,6 +241,107 @@ function FieldRenderer({
       )}
 
       {field.help && <p className="text-xs text-muted-foreground">{field.help}</p>}
+    </div>
+  );
+}
+
+/**
+ * Image list: upload files or paste URLs, either way ending up as the same
+ * array of URLs. Uploads are stored by the API and come back as normal links,
+ * so nothing downstream needs to know how an image got here.
+ */
+function ImageListField({
+  field,
+  value,
+  onChange,
+}: {
+  field: FieldConfig;
+  value: unknown;
+  onChange: (v: unknown) => void;
+}) {
+  const urls = Array.isArray(value) ? (value as string[]) : [];
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFiles(list: FileList | null) {
+    const files = Array.from(list ?? []);
+    if (files.length === 0) return;
+
+    setUploading(true);
+    try {
+      const uploaded = await uploadImages(files);
+      onChange([...urls, ...uploaded]);
+      toast.success(`${uploaded.length} image${uploaded.length === 1 ? '' : 's'} uploaded`);
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+      // Cleared so picking the same file again still fires a change event.
+      if (fileInput.current) fileInput.current.value = '';
+    }
+  }
+
+  return (
+    <div className="grid gap-3">
+      <div className="flex items-center gap-2">
+        <input
+          ref={fileInput}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+          multiple
+          className="hidden"
+          onChange={(e) => void handleFiles(e.target.files)}
+        />
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={uploading}
+          onClick={() => fileInput.current?.click()}
+        >
+          {uploading && <Spinner />}
+          {uploading ? 'Uploading…' : 'Upload images'}
+        </Button>
+        <span className="text-xs text-muted-foreground">
+          or paste URLs below — PNG, JPEG, WebP, AVIF or GIF, up to 10 MB each
+        </span>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+        <Textarea
+          id={field.name}
+          value={tagsToText(value)}
+          placeholder="One value per line"
+          onChange={(e) => onChange(textToTags(e.target.value))}
+        />
+        <div className="grid min-h-28 grid-cols-2 gap-2 rounded-md border bg-muted/20 p-2">
+          {urls.map((url, index) => (
+            <div key={`${url}-${index}`} className="group relative">
+              <img
+                src={url}
+                alt={`Image preview ${index + 1}`}
+                className="aspect-square w-full rounded object-cover"
+                onError={(e) => {
+                  e.currentTarget.style.visibility = 'hidden';
+                }}
+              />
+              <button
+                type="button"
+                aria-label={`Remove image ${index + 1}`}
+                onClick={() => onChange(urls.filter((_, i) => i !== index))}
+                className="absolute right-0.5 top-0.5 hidden size-5 items-center justify-center rounded-full bg-background/90 text-xs leading-none shadow group-hover:flex hover:bg-destructive hover:text-destructive-foreground"
+              >
+                ×
+              </button>
+            </div>
+          ))}
+          {urls.length === 0 && (
+            <span className="col-span-2 self-center text-center text-xs text-muted-foreground">
+              Preview appears here
+            </span>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
