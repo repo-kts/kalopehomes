@@ -2,4 +2,6 @@ node_modules
 dist
 .env
 *.log
-uploads/
+# Runtime-uploaded media only — anchored to repo root so it does NOT match
+# the `src/modules/uploads/` source directory.
+/uploads/
