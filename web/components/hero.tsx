@@ -1,11 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
-import { HeroSlides } from '@/components/hero-slides';
 import { HeroVideo } from '@/components/hero-video';
 import { Reveal } from '@/components/reveal';
 import { SiteHeader } from '@/components/site-header';
-import { getHeroSlides } from '@/lib/hero-slides';
 import { hero, heroHeadline } from '@/lib/site-content';
 import { delay } from '@/lib/motion';
 
@@ -15,35 +13,25 @@ import { delay } from '@/lib/motion';
  * The showreel runs full-bleed behind the whole hero. The footage is a bright
  * interior, so the type stays dark ink and the scrims are paper-tinted rather
  * than black — a dark overlay would fight the film instead of supporting it.
- *
- * Hero slides published in the admin take over the background and the copy.
- * The showreel below is what runs when none are active, so the site still has
- * a hero if the API is down or every slide is switched off.
  */
-export async function Hero() {
-  const slides = await getHeroSlides();
-
+export function Hero() {
   return (
     <Reveal id="hero" immediate className="relative flex min-h-svh flex-col overflow-hidden">
-      {slides.length === 0 && (
-        <>
-          {/* Poster first, video layered over it once playback starts. */}
-          <Image
-            src={hero.image.src}
-            alt={hero.image.alt}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <HeroVideo src={hero.video} fallback={hero.videoFallback} poster={hero.image.src} />
+      {/* Poster first, video layered over it once playback starts. */}
+      <Image
+        src={hero.image.src}
+        alt={hero.image.alt}
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
+      />
+      <HeroVideo src={hero.video} fallback={hero.videoFallback} poster={hero.image.src} />
 
-          {/* Keeps the headline legible across the left of the frame. */}
-          <div className="from-paper/80 via-paper/60 to-paper/40 lg:from-paper/60 lg:via-paper/25 pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r lg:to-transparent" />
-          {/* Keeps the logo and nav legible along the top. */}
-          <div className="from-paper pointer-events-none absolute inset-x-0 top-0 z-[2] h-32 bg-gradient-to-b to-transparent" />
-        </>
-      )}
+      {/* Keeps the headline legible across the left of the frame. */}
+      <div className="from-paper/80 via-paper/60 to-paper/40 lg:from-paper/60 lg:via-paper/25 pointer-events-none absolute inset-0 z-[2] bg-gradient-to-r lg:to-transparent" />
+      {/* Keeps the logo and nav legible along the top. */}
+      <div className="from-paper pointer-events-none absolute inset-x-0 top-0 z-[2] h-32 bg-gradient-to-b to-transparent" />
 
       <div className="pointer-events-none absolute inset-0 z-30 flex">
         {[0, 1, 2, 3, 4].map((i) => (
@@ -53,40 +41,36 @@ export async function Hero() {
 
       <SiteHeader />
 
-      {slides.length > 0 && <HeroSlides slides={slides} />}
-
-      {slides.length === 0 && (
-        <div className="relative z-10 flex flex-1 items-center px-6 pb-16 sm:px-10 md:px-12 lg:pb-20">
-          <div className="max-w-[42rem]">
-            <h1 className="font-display text-[clamp(1.75rem,min(5vw,7.4vh),3.75rem)] leading-[1.02] font-normal tracking-[-0.01em]">
-              {heroHeadline.map((line, i) => (
-                <span key={line.text} className="block overflow-hidden">
-                  <span className="kh-rise block" style={delay(0.7 + i * 0.14)}>
-                    {line.text}
-                    {line.accent ? <span className="text-accent-deep">{line.accent}</span> : null}
-                  </span>
+      <div className="relative z-10 flex flex-1 items-center px-6 pb-16 sm:px-10 md:px-12 lg:pb-20">
+        <div className="max-w-[42rem]">
+          <h1 className="font-display text-[clamp(1.75rem,min(5vw,7.4vh),3.75rem)] leading-[1.02] font-normal tracking-[-0.01em]">
+            {heroHeadline.map((line, i) => (
+              <span key={line.text} className="block overflow-hidden">
+                <span className="kh-rise block" style={delay(0.7 + i * 0.14)}>
+                  {line.text}
+                  {line.accent ? <span className="text-accent-deep">{line.accent}</span> : null}
                 </span>
-              ))}
-            </h1>
+              </span>
+            ))}
+          </h1>
 
-            <p
-              className="kh-fade-up text-body mt-5 max-w-[26rem] text-[16px] leading-[1.65]"
-              style={delay(1.05)}
+          <p
+            className="kh-fade-up text-body mt-5 max-w-[26rem] text-[16px] leading-[1.65]"
+            style={delay(1.05)}
+          >
+            {hero.body}
+          </p>
+
+          <div className="kh-fade-up mt-7 flex flex-wrap gap-3" style={delay(1.18)}>
+            <Link
+              href="/#projects"
+              className="bg-ink text-paper hover:bg-accent hover:text-ink px-7 py-3.5 text-[12px] tracking-[0.16em] uppercase transition-colors duration-300"
             >
-              {hero.body}
-            </p>
-
-            <div className="kh-fade-up mt-7 flex flex-wrap gap-3" style={delay(1.18)}>
-              <Link
-                href="/#projects"
-                className="bg-ink text-paper hover:bg-accent hover:text-ink px-7 py-3.5 text-[12px] tracking-[0.16em] uppercase transition-colors duration-300"
-              >
-                View projects
-              </Link>
-            </div>
+              View projects
+            </Link>
           </div>
         </div>
-      )}
+      </div>
     </Reveal>
   );
 }

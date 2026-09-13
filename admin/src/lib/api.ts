@@ -67,31 +67,6 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   return data as T;
 }
 
-/**
- * Uploads image files and returns their public URLs.
- *
- * Deliberately not routed through `apiFetch`: that always sets a JSON
- * content-type, whereas multipart needs the browser to set the header itself
- * so it can include the boundary.
- */
-export async function uploadImages(files: File[]): Promise<string[]> {
-  const form = new FormData();
-  for (const file of files) form.append('files', file);
-
-  const headers: Record<string, string> = {};
-  const token = getToken();
-  if (token) headers.Authorization = `Bearer ${token}`;
-
-  const res = await fetch(`${BASE}/uploads`, { method: 'POST', headers, body: form });
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    const message = (data as { message?: string }).message ?? `Upload failed (${res.status})`;
-    throw new ApiError(res.status, message, (data as { details?: unknown }).details);
-  }
-  return (data as { data: { urls: string[] } }).data.urls;
-}
-
 /** Common envelope shapes returned by the API. */
 export interface Paginated<T> {
   data: T[];

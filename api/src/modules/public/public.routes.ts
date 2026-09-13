@@ -163,19 +163,6 @@ publicRouter.get(
 );
 
 publicRouter.get(
-  '/gallery',
-  asyncHandler(async (req, res) => {
-    const featured = req.query.featured === 'true' ? { isFeatured: true } : {};
-    const data = await prisma.gallery.findMany({
-      where: { status: 'PUBLISHED', ...featured },
-      // Featured items lead the wall; newest first after that.
-      orderBy: [{ isFeatured: 'desc' }, { createdAt: 'desc' }],
-    });
-    res.json({ data });
-  }),
-);
-
-publicRouter.get(
   '/faqs',
   asyncHandler(async (_req, res) => {
     res.json({

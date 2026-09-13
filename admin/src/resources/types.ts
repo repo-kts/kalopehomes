@@ -28,12 +28,6 @@ export interface FieldConfig {
   defaultValue?: unknown;
   /** Auto-generate this slug field from another field on create. */
   slugFrom?: string;
-  /**
-   * For `tags` fields holding image URLs: show the thumbnail strip.
-   * Explicit rather than inferred from the field name, which differs per
-   * resource (`images` on products/projects, `imageUrls` on gallery).
-   */
-  preview?: boolean;
 }
 
 export interface ColumnConfig<T = Record<string, unknown>> {

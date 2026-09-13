@@ -3,12 +3,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { DesignRail } from '@/components/design-rail';
 import { Reveal } from '@/components/reveal';
 import { SiteFooter } from '@/components/site-footer';
 import { SiteHeader } from '@/components/site-header';
 import { designCategories, designCategoryBySlug } from '@/lib/design-categories';
-import { designsForCategory } from '@/lib/design-items';
 import { delay } from '@/lib/motion';
 
 /** All twelve pages are known at build time, so all twelve prerender. */
@@ -38,7 +36,6 @@ export default async function DesignCategoryPage(props: PageProps<'/design/[slug
   if (!category) notFound();
 
   const others = designCategories.filter((item) => item.slug !== slug);
-  const designs = designsForCategory(slug);
 
   return (
     <>
@@ -132,8 +129,6 @@ export default async function DesignCategoryPage(props: PageProps<'/design/[slug
             </ul>
           </div>
         </Reveal>
-
-        <DesignRail items={designs} heading={`Top ${category.title.toLowerCase()}`} />
 
         {/* Gallery. Two staggered columns on a phone, four across on desktop. */}
         <Reveal className="bg-paper-deep px-6 py-16 sm:px-10 md:px-12 md:py-20">
