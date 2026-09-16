@@ -48,7 +48,7 @@ interface Lead {
   createdAt: string;
   assignedTo: { id: string; name: string } | null;
   category: { name: string } | null;
-  product: { name: string } | null;
+  subCategory: { name: string } | null;
   activities: Activity[];
   quotes: Quote[];
 }
@@ -127,7 +127,7 @@ export function LeadDetailPage() {
               <Detail label="Property" value={lead.propertyType} />
               <Detail label="Budget" value={lead.budgetRange} />
               <Detail label="Source" value={lead.source} />
-              <Detail label="Interest" value={lead.category?.name ?? lead.product?.name} />
+              <Detail label="Interest" value={lead.category?.name ?? lead.subCategory?.name} />
               <Detail
                 label="Rooms"
                 value={lead.roomsInterested.length ? lead.roomsInterested.join(', ') : null}

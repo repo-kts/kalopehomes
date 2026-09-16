@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -119,7 +119,7 @@ function FieldRenderer({
   value: unknown;
   onChange: (v: unknown) => void;
 }) {
-  const wide = ['textarea', 'json', 'tags', 'relations'].includes(field.type);
+  const wide = ['textarea', 'richtext', 'json', 'tags', 'relations'].includes(field.type);
   const options = useResourceOptions(
     field.type === 'relation' || field.type === 'relations' ? field.optionsResource : undefined,
   );
@@ -139,6 +139,8 @@ function FieldRenderer({
           onChange={(e) => onChange(e.target.value)}
         />
       )}
+
+      {field.type === 'richtext' && <RichTextField value={value} onChange={onChange} />}
 
       {field.type === 'json' && (
         <Textarea
@@ -241,6 +243,104 @@ function FieldRenderer({
       )}
 
       {field.help && <p className="text-xs text-muted-foreground">{field.help}</p>}
+    </div>
+  );
+}
+
+function RichTextField({ value, onChange }: { value: unknown; onChange: (v: unknown) => void }) {
+  const editorRef = useRef<HTMLDivElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [activeFormats, setActiveFormats] = useState({ bold: false, italic: false, underline: false });
+
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== String(value ?? '')) {
+      editorRef.current.innerHTML = String(value ?? '');
+    }
+  }, [value]);
+
+  useEffect(() => {
+    function updateActiveFormats() {
+      setActiveFormats({
+        bold: document.queryCommandState('bold'),
+        italic: document.queryCommandState('italic'),
+        underline: document.queryCommandState('underline'),
+      });
+    }
+
+    document.addEventListener('selectionchange', updateActiveFormats);
+    return () => document.removeEventListener('selectionchange', updateActiveFormats);
+  }, []);
+
+  function format(command: 'bold' | 'italic' | 'underline') {
+    editorRef.current?.focus();
+    document.execCommand(command);
+    setActiveFormats((current) => ({ ...current, [command]: document.queryCommandState(command) }));
+    onChange(editorRef.current?.innerHTML ?? '');
+  }
+
+  async function insertImage(file: File | undefined) {
+    if (!file || !editorRef.current) return;
+    setUploading(true);
+    try {
+      const [url] = await uploadImages([file]);
+      editorRef.current.focus();
+      document.execCommand('insertImage', false, url);
+      onChange(editorRef.current.innerHTML);
+      toast.success('Image inserted');
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : 'Upload failed');
+    } finally {
+      setUploading(false);
+      if (fileInput.current) fileInput.current.value = '';
+    }
+  }
+
+  return (
+    <div className="overflow-hidden rounded-md border">
+      <div className="flex items-center gap-1 border-b bg-muted/30 p-1">
+        {(['bold', 'italic', 'underline'] as const).map((command) => (
+          <Button
+            key={command}
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={command[0].toUpperCase() + command.slice(1)}
+            title={command[0].toUpperCase() + command.slice(1)}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => format(command)}
+            className={cn(
+              'font-serif text-base',
+              activeFormats[command] &&
+                'bg-secondary-foreground/15 text-secondary-foreground hover:bg-secondary-foreground/25',
+              command === 'bold' && 'font-bold',
+              command === 'italic' && 'italic',
+              command === 'underline' && 'underline',
+            )}
+          >
+            {command === 'bold' ? 'B' : command === 'italic' ? 'I' : 'U'}
+          </Button>
+        ))}
+        <input
+          ref={fileInput}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/avif,image/gif"
+          className="hidden"
+          onChange={(e) => void insertImage(e.target.files?.[0])}
+        />
+        <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileInput.current?.click()}>
+          {uploading ? 'Uploading…' : 'Insert image'}
+        </Button>
+      </div>
+      <div
+        ref={editorRef}
+        contentEditable
+        role="textbox"
+        aria-multiline="true"
+        className="min-h-48 p-3 text-sm outline-none"
+        onInput={(e) => onChange(e.currentTarget.innerHTML)}
+        data-placeholder="Write your blog content..."
+      />
     </div>
   );
 }

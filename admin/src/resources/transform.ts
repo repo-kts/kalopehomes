@@ -21,7 +21,7 @@ export function deserialize(config: ResourceConfig, record: Rec | null): Rec {
         break;
       }
       case 'relations': {
-        const base = field.name.replace(/Ids$/, 's'); // roomIds -> rooms
+        const base = field.name.replace(/Ids$/, 's');
         const arr = (record?.[base] as Rec[] | undefined) ?? [];
         values[field.name] = arr.map(
           (x) =>
@@ -75,7 +75,7 @@ export function serialize(config: ResourceConfig, values: Rec, isEdit: boolean):
         break;
       case 'tags': {
         const arr = Array.isArray(value) ? (value as string[]) : [];
-        // Product images use objects; standalone gallery URLs stay strings.
+        // Sub-category images use objects; standalone gallery URLs stay strings.
         payload[field.name] =
           field.name === 'images' ? arr.map((url) => ({ url })) : arr;
         break;

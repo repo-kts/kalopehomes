@@ -42,7 +42,7 @@ export const publicLeadSchema = z.object({
   budgetRange: z.string().trim().optional(),
   roomsInterested: z.array(z.string().trim()).optional(),
   categoryId: z.uuid().optional(),
-  productId: z.uuid().optional(),
+  subCategoryId: z.uuid().optional(),
   preferredContactAt: z.coerce.date().optional(),
 });
 

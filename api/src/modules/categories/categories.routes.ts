@@ -36,5 +36,5 @@ export const categoriesRouter = crudRouter({
   filterable: ['status', 'parentId', 'isFeatured'],
   sortable: ['name', 'sortOrder', 'createdAt'],
   defaultOrderBy: { sortOrder: 'asc' },
-  include: { parent: true, _count: { select: { children: true, products: true } } },
+  include: { parent: true, _count: { select: { children: true, subCategories: true } } },
 });

@@ -13,8 +13,8 @@ import { leadStatusBadge } from '@/pages/leadStatus';
 
 interface Stats {
   catalog: {
-    totalProducts: number;
-    publishedProducts: number;
+    totalSubCategories: number;
+    publishedSubCategories: number;
     totalCategories: number;
     totalProjects: number;
   };
@@ -40,8 +40,8 @@ export function DashboardPage() {
   if (isLoading || !data) return <PageLoader />;
 
   const cards = [
-    { label: 'Products', value: data.catalog.totalProducts, sub: `${data.catalog.publishedProducts} published`, icon: Package, to: '/products' },
     { label: 'Categories', value: data.catalog.totalCategories, sub: 'Catalog taxonomy', icon: Sparkles, to: '/categories' },
+    { label: 'Sub-categories', value: data.catalog.totalSubCategories, sub: `${data.catalog.publishedSubCategories} published`, icon: Package, to: '/sub-categories' },
     { label: 'Projects', value: data.catalog.totalProjects, sub: 'Portfolio', icon: Building2, to: '/projects' },
     { label: 'New Leads', value: data.leads.new, sub: `${data.leads.total} total`, icon: Inbox, to: '/leads' },
   ];

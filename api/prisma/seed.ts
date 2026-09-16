@@ -33,25 +33,6 @@ async function seedAdmin() {
 }
 
 async function seedTaxonomies() {
-  const rooms = [
-    'Kitchen',
-    'Living Room',
-    'Master Bedroom',
-    'Kids Room',
-    'Bathroom',
-    'Home Office',
-    'Dining Room',
-    'Pooja Room',
-  ];
-  for (const [i, name] of rooms.entries()) {
-    const slug = name.toLowerCase().replace(/\s+/g, '-');
-    await prisma.room.upsert({
-      where: { slug },
-      create: { name, slug, sortOrder: i, isActive: true },
-      update: {},
-    });
-  }
-
   const styles = ['Modern', 'Contemporary', 'Minimalist', 'Scandinavian', 'Rustic', 'Industrial'];
   for (const [i, name] of styles.entries()) {
     const slug = name.toLowerCase().replace(/\s+/g, '-');
@@ -61,7 +42,7 @@ async function seedTaxonomies() {
       update: {},
     });
   }
-  console.log(`✔ Seeded ${rooms.length} rooms and ${styles.length} styles`);
+  console.log(`✔ Seeded ${styles.length} styles`);
 }
 
 async function seedCategories() {
@@ -111,13 +92,13 @@ async function seedCategories() {
   console.log(`✔ Seeded ${categories.length} categories`);
 }
 
-async function seedProducts() {
+async function seedSubCategories() {
   const categories = await prisma.category.findMany({
     where: { slug: { in: ['modular-kitchen', 'wardrobes', 'living-room', 'bedroom'] } },
   });
   const categoryBySlug = new Map(categories.map((category) => [category.slug, category]));
 
-  const products = [
+  const subCategories = [
     {
       name: 'L-Shaped Modern Kitchen',
       slug: 'l-shaped-modern-kitchen',
@@ -165,13 +146,13 @@ async function seedProducts() {
     },
   ];
 
-  for (const [sortOrder, product] of products.entries()) {
-    const category = categoryBySlug.get(product.categorySlug);
+  for (const [sortOrder, subCategory] of subCategories.entries()) {
+    const category = categoryBySlug.get(subCategory.categorySlug);
     if (!category) continue;
 
-    const { categorySlug: _categorySlug, imageUrl, imageAlt, ...data } = product;
-    await prisma.product.upsert({
-      where: { slug: product.slug },
+    const { categorySlug: _categorySlug, imageUrl, imageAlt, ...data } = subCategory;
+    await prisma.subCategory.upsert({
+      where: { slug: subCategory.slug },
       create: {
         ...data,
         categoryId: category.id,
@@ -183,7 +164,7 @@ async function seedProducts() {
       update: {},
     });
   }
-  console.log(`✔ Seeded ${products.length} catalog products`);
+  console.log(`✔ Seeded ${subCategories.length} catalog sub-categories`);
 }
 
 async function seedCms() {
@@ -255,7 +236,7 @@ async function main() {
   await seedAdmin();
   await seedTaxonomies();
   await seedCategories();
-  await seedProducts();
+  await seedSubCategories();
   await seedCms();
   console.log('✅ Seed complete');
 }

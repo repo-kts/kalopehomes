@@ -10,7 +10,7 @@ export const quoteStatus = z.enum([
 ]);
 
 const itemSchema = z.object({
-  productId: z.uuid().nullable().optional(),
+  subCategoryId: z.uuid().nullable().optional(),
   title: z.string().trim().min(1),
   description: z.string().trim().optional(),
   quantity: z.number().positive().default(1),

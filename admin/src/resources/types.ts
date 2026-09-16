@@ -1,8 +1,10 @@
+  /** Resource-specific image fields (e.g. `images` on sub-categories/projects, `imageUrls` on gallery). */
 import type { ReactNode } from 'react';
 
 export type FieldType =
   | 'text'
   | 'textarea'
+  | 'richtext'
   | 'number'
   | 'url'
   | 'checkbox'

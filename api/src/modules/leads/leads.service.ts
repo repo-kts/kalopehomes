@@ -14,7 +14,7 @@ import type { CreateLeadInput, PublicLeadInput, UpdateLeadInput } from './leads.
 const detailInclude = {
   assignedTo: { select: { id: true, name: true, email: true } },
   category: { select: { id: true, name: true, slug: true } },
-  product: { select: { id: true, name: true, slug: true } },
+  subCategory: { select: { id: true, name: true, slug: true } },
   activities: {
     orderBy: { createdAt: 'desc' as const },
     include: { createdBy: { select: { id: true, name: true } } },
