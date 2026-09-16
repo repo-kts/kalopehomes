@@ -21,13 +21,13 @@ export default function App() {
           <Route index element={<DashboardPage />} />
 
           {/* Config-driven CRUD resources */}
-          <Route path="products" element={<ResourceListPage resourceKey="products" />} />
+          <Route path="sub-categories" element={<ResourceListPage resourceKey="sub-categories" />} />
           <Route path="categories" element={<ResourceListPage resourceKey="categories" />} />
-          <Route path="rooms" element={<ResourceListPage resourceKey="rooms" />} />
           <Route path="styles" element={<ResourceListPage resourceKey="styles" />} />
           <Route path="hero-slides" element={<ResourceListPage resourceKey="hero-slides" />} />
           <Route path="projects" element={<ResourceListPage resourceKey="projects" />} />
           <Route path="gallery" element={<ResourceListPage resourceKey="gallery" />} />
+          <Route path="blog" element={<ResourceListPage resourceKey="blog" />} />
           <Route path="testimonials" element={<ResourceListPage resourceKey="testimonials" />} />
           <Route path="faqs" element={<ResourceListPage resourceKey="faqs" />} />
           <Route path="users" element={<ResourceListPage resourceKey="users" />} />

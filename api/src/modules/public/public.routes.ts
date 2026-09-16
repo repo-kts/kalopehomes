@@ -43,16 +43,15 @@ publicRouter.get(
   }),
 );
 
-// ---- Products ----------------------------------------------------------
+// ---- Sub-categories ----------------------------------------------------
 publicRouter.get(
-  '/products',
+  '/sub-categories',
   asyncHandler(async (req, res) => {
-    const { category, room, style, featured } = req.query as Record<string, string | undefined>;
-    const data = await prisma.product.findMany({
+    const { category, style, featured } = req.query as Record<string, string | undefined>;
+    const data = await prisma.subCategory.findMany({
       where: {
         status: 'PUBLISHED',
         ...(category ? { category: { slug: category } } : {}),
-        ...(room ? { rooms: { some: { room: { slug: room } } } } : {}),
         ...(style ? { styles: { some: { style: { slug: style } } } } : {}),
         ...(featured === 'true' ? { isFeatured: true } : {}),
       },
@@ -60,7 +59,6 @@ publicRouter.get(
       include: {
         category: { select: { id: true, name: true, slug: true } },
         images: { orderBy: { sortOrder: 'asc' } },
-        rooms: { include: { room: { select: { id: true, name: true, slug: true } } } },
         styles: { include: { style: { select: { id: true, name: true, slug: true } } } },
       },
     });
@@ -69,32 +67,22 @@ publicRouter.get(
 );
 
 publicRouter.get(
-  '/products/:slug',
+  '/sub-categories/:slug',
   asyncHandler(async (req, res) => {
-    const product = await prisma.product.findFirst({
+    const subCategory = await prisma.subCategory.findFirst({
       where: { slug: req.params.slug, status: 'PUBLISHED' },
       include: {
         category: { select: { id: true, name: true, slug: true } },
         images: { orderBy: { sortOrder: 'asc' } },
-        rooms: { include: { room: { select: { id: true, name: true, slug: true } } } },
         styles: { include: { style: { select: { id: true, name: true, slug: true } } } },
       },
     });
-    if (!product) throw new HttpError(404, 'Product not found');
-    res.json({ data: product });
+    if (!subCategory) throw new HttpError(404, 'Sub-category not found');
+    res.json({ data: subCategory });
   }),
 );
 
 // ---- Taxonomies --------------------------------------------------------
-publicRouter.get(
-  '/rooms',
-  asyncHandler(async (_req, res) => {
-    res.json({
-      data: await prisma.room.findMany({ where: { isActive: true }, orderBy: { sortOrder: 'asc' } }),
-    });
-  }),
-);
-
 publicRouter.get(
   '/styles',
   asyncHandler(async (_req, res) => {

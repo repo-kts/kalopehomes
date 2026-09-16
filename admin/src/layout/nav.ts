@@ -18,9 +18,8 @@ export const NAV: NavGroup[] = [
   {
     title: 'Catalog',
     items: [
-      { label: 'Products', to: '/products', icon: 'Package', permission: 'product:read' },
       { label: 'Categories', to: '/categories', icon: 'FolderTree', permission: 'category:read' },
-      { label: 'Rooms', to: '/rooms', icon: 'DoorOpen', permission: 'taxonomy:read' },
+      { label: 'Sub-categories', to: '/sub-categories', icon: 'Package', permission: 'product:read' },
       { label: 'Styles', to: '/styles', icon: 'Palette', permission: 'taxonomy:read' },
     ],
   },
@@ -30,6 +29,7 @@ export const NAV: NavGroup[] = [
       { label: 'Hero Slides', to: '/hero-slides', icon: 'Images', permission: 'content:read' },
       { label: 'Projects', to: '/projects', icon: 'Building2', permission: 'content:read' },
       { label: 'Gallery', to: '/gallery', icon: 'Images', permission: 'content:read' },
+      { label: 'Blogs', to: '/blog', icon: 'BookOpen', permission: 'content:read' },
       { label: 'Testimonials', to: '/testimonials', icon: 'Quote', permission: 'content:read' },
       { label: 'FAQs', to: '/faqs', icon: 'HelpCircle', permission: 'content:read' },
       { label: 'Settings', to: '/settings', icon: 'Settings', permission: 'content:read' },

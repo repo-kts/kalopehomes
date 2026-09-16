@@ -22,7 +22,7 @@ export const PERMISSIONS = {
   PRODUCT_WRITE: 'product:write',
   PRODUCT_DELETE: 'product:delete',
 
-  TAXONOMY_READ: 'taxonomy:read', // rooms & styles
+  TAXONOMY_READ: 'taxonomy:read', // styles
   TAXONOMY_WRITE: 'taxonomy:write',
   TAXONOMY_DELETE: 'taxonomy:delete',
 

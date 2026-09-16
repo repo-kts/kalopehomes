@@ -92,6 +92,7 @@ enum BannerPlacement {
 // ---------------------------------------------------------------------------
 
 /// A role bundles a set of permission strings (e.g. "product:write").
+/// A role bundles a set of permission strings (e.g. "product:write").
 /// Seeded system roles cannot be deleted.
 model Role {
   id          String   @id @default(uuid())
@@ -133,7 +134,7 @@ model User {
 }
 
 // ---------------------------------------------------------------------------
-// Catalog — Categories, Products, Rooms, Styles
+// Catalog — Categories, Sub-categories, Styles
 // ---------------------------------------------------------------------------
 
 /// Hierarchical taxonomy: top-level offerings (e.g. "Modular Kitchen",
@@ -155,8 +156,9 @@ model Category {
   parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: SetNull)
   children Category[] @relation("CategoryTree")
 
-  products Product[]
+  subCategories SubCategory[]
   projects Project[]
+  blogs    Blog[]
   leads    Lead[]
 
   createdAt DateTime @default(now())
@@ -165,22 +167,6 @@ model Category {
   @@index([parentId])
   @@index([status])
   @@map("categories")
-}
-
-/// Room / space type used to tag designs (Kitchen, Living Room, Bedroom...).
-model Room {
-  id          String        @id @default(uuid())
-  name        String
-  slug        String        @unique
-  description String?
-  imageUrl    String?
-  sortOrder   Int           @default(0)
-  isActive    Boolean       @default(true)
-  products    ProductRoom[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  @@map("rooms")
 }
 
 /// Design style tag (Modern, Contemporary, Rustic...).
@@ -192,7 +178,7 @@ model Style {
   imageUrl    String?
   sortOrder   Int            @default(0)
   isActive    Boolean        @default(true)
-  products    ProductStyle[]
+  subCategories SubCategoryStyle[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
@@ -202,7 +188,7 @@ model Style {
 /// A catalog/design item. Not sold directly — it drives quote requests.
 /// `startingPrice` + `priceUnit` power the "starting at ₹X onwards" estimator;
 /// `specs` holds flexible attributes (layout, finish, dimensions...).
-model Product {
+model SubCategory {
   id               String        @id @default(uuid())
   name             String
   slug             String        @unique
@@ -222,9 +208,8 @@ model Product {
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
-  images ProductImage[]
-  rooms  ProductRoom[]
-  styles ProductStyle[]
+  images SubCategoryImage[]
+  styles SubCategoryStyle[]
   leads  Lead[]
   quoteItems QuoteItem[]
 
@@ -234,43 +219,32 @@ model Product {
   @@index([categoryId])
   @@index([status])
   @@index([isFeatured])
-  @@map("products")
+  @@map("sub_categories")
 }
 
-/// Ordered image gallery for a product (URLs only — no binary storage).
-model ProductImage {
+/// Ordered image gallery for a sub-category (URLs only — no binary storage).
+model SubCategoryImage {
   id        String  @id @default(uuid())
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subCategoryId String
+  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
   url       String
   alt       String?
   sortOrder Int     @default(0)
   isPrimary Boolean @default(false)
 
-  @@index([productId])
-  @@map("product_images")
+  @@index([subCategoryId])
+  @@map("sub_category_images")
 }
 
-/// Join: Product <-> Room (many-to-many).
-model ProductRoom {
-  productId String
-  roomId    String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  room      Room    @relation(fields: [roomId], references: [id], onDelete: Cascade)
-
-  @@id([productId, roomId])
-  @@map("product_rooms")
-}
-
-/// Join: Product <-> Style (many-to-many).
-model ProductStyle {
-  productId String
+/// Join: SubCategory <-> Style (many-to-many).
+model SubCategoryStyle {
+  subCategoryId String
   styleId   String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  subCategory   SubCategory @relation(fields: [subCategoryId], references: [id], onDelete: Cascade)
   style     Style   @relation(fields: [styleId], references: [id], onDelete: Cascade)
 
-  @@id([productId, styleId])
-  @@map("product_styles")
+  @@id([subCategoryId, styleId])
+  @@map("sub_category_styles")
 }
 
 // ---------------------------------------------------------------------------
@@ -381,6 +355,25 @@ model Faq {
   @@map("faqs")
 }
 
+/// Editorial blog article with formatted HTML content.
+model Blog {
+  id           String        @id @default(uuid())
+  thumbnailUrl String?
+  topic        String
+  content      String
+  status       ContentStatus @default(DRAFT)
+
+  categoryId String?
+  category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId])
+  @@index([status])
+  @@map("blogs")
+}
+
 /// Global site configuration as typed key/value (phone, socials, stats...).
 model Setting {
   id        String   @id @default(uuid())
@@ -418,8 +411,8 @@ model Lead {
   categoryId String?
   category   Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  productId String?
-  product   Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  subCategoryId String?
+  subCategory   SubCategory?  @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
 
   preferredContactAt DateTime?
 
@@ -452,7 +445,7 @@ model LeadActivity {
   @@map("lead_activities")
 }
 
-/// A quotation issued against a lead. Line items reference products optionally.
+/// A quotation issued against a lead. Line items reference sub-categories optionally.
 model Quote {
   id          String      @id @default(uuid())
   quoteNumber String      @unique
@@ -487,8 +480,8 @@ model QuoteItem {
   id          String   @id @default(uuid())
   quoteId     String
   quote       Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
-  productId   String?
-  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  subCategoryId   String?
+  subCategory     SubCategory? @relation(fields: [subCategoryId], references: [id], onDelete: SetNull)
   title       String
   description String?
   quantity    Decimal  @default(1) @db.Decimal(10, 2)

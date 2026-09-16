@@ -25,7 +25,6 @@ const base = {
   metaTitle: z.string().trim().optional(),
   metaDescription: z.string().trim().optional(),
   categoryId: z.uuid(),
-  roomIds: z.array(z.uuid()).optional(),
   styleIds: z.array(z.uuid()).optional(),
   images: z.array(imageSchema).optional(),
 };

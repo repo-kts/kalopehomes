@@ -12,8 +12,8 @@ dashboardRouter.get(
   authenticate,
   asyncHandler(async (_req, res) => {
     const [
-      totalProducts,
-      publishedProducts,
+      totalSubCategories,
+      publishedSubCategories,
       totalCategories,
       totalProjects,
       leadsByStatus,
@@ -21,8 +21,8 @@ dashboardRouter.get(
       newLeads,
       recentLeads,
     ] = await Promise.all([
-      prisma.product.count(),
-      prisma.product.count({ where: { status: 'PUBLISHED' } }),
+      prisma.subCategory.count(),
+      prisma.subCategory.count({ where: { status: 'PUBLISHED' } }),
       prisma.category.count(),
       prisma.project.count(),
       prisma.lead.groupBy({ by: ['status'], _count: { _all: true } }),
@@ -45,7 +45,7 @@ dashboardRouter.get(
 
     res.json({
       data: {
-        catalog: { totalProducts, publishedProducts, totalCategories, totalProjects },
+        catalog: { totalSubCategories, publishedSubCategories, totalCategories, totalProjects },
         leads: {
           total: totalLeads,
           new: newLeads,

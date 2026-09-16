@@ -40,9 +40,8 @@ Default super admin (from `.env`): `admin@kalopehomes.com` / `Admin@12345`.
 
 ```
 RBAC        User ─▶ Role (permissions: string[])
-Catalog     Category (self-nested) ─▶ Product ─▶ ProductImage
-                                       Product ─▶ Room  (m2m)
-                                       Product ─▶ Style (m2m)
+Catalog     Category (self-nested) ─▶ SubCategory ─▶ SubCategoryImage
+                                       SubCategory ─▶ Style (m2m)
 CMS         HeroSlide · Testimonial · Project(+images) · Faq · Setting(kv)
 Pipeline    Lead ─▶ LeadActivity (timeline)
             Lead ─▶ Quote ─▶ QuoteItem
@@ -67,8 +66,8 @@ Base path: `/api/v1`.
 | --- | --- | --- |
 | GET | `/public/categories` | Published top-level categories (+children) |
 | GET | `/public/categories/:slug` | One published category |
-| GET | `/public/products` | Published products (`?category=&room=&style=&featured=`) |
-| GET | `/public/products/:slug` | One published product |
+| GET | `/public/sub-categories` | Published sub-categories (`?category=&style=&featured=`) |
+| GET | `/public/sub-categories/:slug` | One published sub-category |
 | GET | `/public/rooms` · `/public/styles` | Active taxonomies |
 | GET | `/public/hero` | Active hero slides (`?placement=`) |
 | GET | `/public/testimonials` · `/public/faqs` | Active content |
@@ -85,8 +84,8 @@ Base path: `/api/v1`.
 
 Standard REST (`GET /`, `GET /:id`, `POST /`, `PATCH /:id`, `DELETE /:id`):
 
-`/users` `/roles` `/categories` `/products` `/rooms` `/styles`
-`/hero-slides` `/testimonials` `/projects` `/faqs` `/settings`
+`/users` `/roles` `/categories` `/sub-categories` `/styles`
+`/hero-slides` `/testimonials` `/projects` `/blog` `/faqs` `/settings`
 `/leads` `/quotes`
 
 Plus:
