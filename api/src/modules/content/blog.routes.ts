@@ -1,15 +1,18 @@
 import { z } from 'zod';
 
+import { sanitizeBlogHtml } from '../../lib/sanitize';
 import { crudRouter } from '../../lib/crud';
 import { PERMISSIONS } from '../../lib/permissions';
 import { prisma } from '../../lib/prisma';
 import { contentStatus, urlField } from '../../lib/validators';
 
+const blogContent = z.string().trim().min(1).transform((value) => sanitizeBlogHtml(value));
+
 const base = {
   thumbnailUrl: urlField,
   topic: z.string().trim().min(1),
   categoryId: z.string().uuid().nullable().optional(),
-  content: z.string().trim().min(1),
+  content: blogContent,
   status: contentStatus.optional(),
 };
 

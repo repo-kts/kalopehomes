@@ -247,6 +247,70 @@ function FieldRenderer({
   );
 }
 
+function sanitizeBlogHtml(raw: unknown): string {
+  const html = typeof raw === 'string' ? raw : '';
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  const allowedTags = new Set(['p', 'br', 'strong', 'b', 'em', 'i', 'u', 'ul', 'ol', 'li', 'blockquote', 'a', 'img', 'span', 'div']);
+  const allowedAttrs: Record<string, Set<string>> = {
+    a: new Set(['href', 'target', 'rel']),
+    img: new Set(['src', 'alt', 'title']),
+  };
+
+  const elements = Array.from(doc.body.querySelectorAll('*'));
+  for (const el of elements) {
+    const tag = el.tagName.toLowerCase();
+    if (!allowedTags.has(tag)) {
+      el.replaceWith(...Array.from(el.childNodes));
+      continue;
+    }
+
+    for (const attr of Array.from(el.attributes)) {
+      const name = attr.name.toLowerCase();
+      if (name.startsWith('on')) {
+        el.removeAttribute(attr.name);
+        continue;
+      }
+      if (!allowedAttrs[tag]?.has(name)) {
+        el.removeAttribute(attr.name);
+      }
+    }
+
+    if (tag === 'a') {
+      const href = el.getAttribute('href');
+      if (!href) {
+        el.removeAttribute('href');
+      } else {
+        try {
+          const url = new URL(href, 'https://example.com');
+          if (!['http:', 'https:', 'mailto:'].includes(url.protocol)) {
+            el.removeAttribute('href');
+          }
+        } catch {
+          el.removeAttribute('href');
+        }
+      }
+    }
+
+    if (tag === 'img') {
+      const src = el.getAttribute('src');
+      if (!src) {
+        el.removeAttribute('src');
+      } else {
+        try {
+          const url = new URL(src, 'https://example.com');
+          if (!['http:', 'https:', 'data:'].includes(url.protocol)) {
+            el.removeAttribute('src');
+          }
+        } catch {
+          el.removeAttribute('src');
+        }
+      }
+    }
+  }
+
+  return doc.body.innerHTML.trim();
+}
+
 function RichTextField({ value, onChange }: { value: unknown; onChange: (v: unknown) => void }) {
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -254,8 +318,9 @@ function RichTextField({ value, onChange }: { value: unknown; onChange: (v: unkn
   const [activeFormats, setActiveFormats] = useState({ bold: false, italic: false, underline: false });
 
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== String(value ?? '')) {
-      editorRef.current.innerHTML = String(value ?? '');
+    const sanitized = sanitizeBlogHtml(value);
+    if (editorRef.current && editorRef.current.innerHTML !== sanitized) {
+      editorRef.current.innerHTML = sanitized;
     }
   }, [value]);
 
@@ -276,7 +341,7 @@ function RichTextField({ value, onChange }: { value: unknown; onChange: (v: unkn
     editorRef.current?.focus();
     document.execCommand(command);
     setActiveFormats((current) => ({ ...current, [command]: document.queryCommandState(command) }));
-    onChange(editorRef.current?.innerHTML ?? '');
+    onChange(sanitizeBlogHtml(editorRef.current?.innerHTML ?? ''));
   }
 
   async function insertImage(file: File | undefined) {
@@ -286,7 +351,7 @@ function RichTextField({ value, onChange }: { value: unknown; onChange: (v: unkn
       const [url] = await uploadImages([file]);
       editorRef.current.focus();
       document.execCommand('insertImage', false, url);
-      onChange(editorRef.current.innerHTML);
+      onChange(sanitizeBlogHtml(editorRef.current.innerHTML));
       toast.success('Image inserted');
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : 'Upload failed');
@@ -338,7 +403,7 @@ function RichTextField({ value, onChange }: { value: unknown; onChange: (v: unkn
         role="textbox"
         aria-multiline="true"
         className="min-h-48 p-3 text-sm outline-none"
-        onInput={(e) => onChange(e.currentTarget.innerHTML)}
+        onInput={(e) => onChange(sanitizeBlogHtml(e.currentTarget.innerHTML))}
         data-placeholder="Write your blog content..."
       />
     </div>

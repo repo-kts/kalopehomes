@@ -84,8 +84,8 @@ Base path: `/api/v1`.
 
 Standard REST (`GET /`, `GET /:id`, `POST /`, `PATCH /:id`, `DELETE /:id`):
 
-`/users` `/roles` `/categories` `/products` `/rooms` `/styles`
-`/hero-slides` `/testimonials` `/projects` `/faqs` `/settings`
+`/users` `/roles` `/categories` `/sub-categories` `/styles`
+`/hero-slides` `/testimonials` `/projects` `/blog` `/faqs` `/settings`
 `/leads` `/quotes`
 
 Plus:
